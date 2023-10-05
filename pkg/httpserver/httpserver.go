@@ -6,9 +6,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+
+	"github.com/FKuiv/LocalChat/pkg/db"
 )
 
 func StartHTTPServer() {
+	DB := db.Init()
+	dbHandler := New(DB)
+
 	muxRouter := mux.NewRouter()
 
 	muxRouter.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +21,7 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
-	muxRouter.HandleFunc("/register", registerHandler).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/register", dbHandler.registerHandler).Methods(http.MethodPost)
 
 	handler := cors.Default().Handler(muxRouter)
 

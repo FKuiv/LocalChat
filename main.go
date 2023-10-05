@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/FKuiv/LocalChat/httpserver"
+	"github.com/FKuiv/LocalChat/pkg/httpserver"
 )
 
 func main() {
