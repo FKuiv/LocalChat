@@ -2,6 +2,7 @@ package httpserver
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -16,8 +17,8 @@ func StartHTTPServer() {
 
 	muxRouter := mux.NewRouter()
 
-	muxRouter.HandleFunc("/status", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Simple Server")
+	muxRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Simple Go server for LocalChat")
 	}).Methods(http.MethodGet)
 
 	// Endpoints
@@ -25,6 +26,6 @@ func StartHTTPServer() {
 
 	handler := cors.Default().Handler(muxRouter)
 
-	fmt.Println("starting http server at localhost:8000")
+	log.Println("starting http server at localhost:8000")
 	http.ListenAndServe(":8000", handler)
 }
