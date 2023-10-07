@@ -1,4 +1,4 @@
-package httpserver
+package handlers
 
 import "gorm.io/gorm"
 

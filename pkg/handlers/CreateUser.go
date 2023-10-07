@@ -1,20 +1,21 @@
-package httpserver
+package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
-	"time"
+	"strings"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-func (db dbHandler) registerHandler(w http.ResponseWriter, r *http.Request) {
+func (db dbHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	var userInfo models.UserCreateReq
+	var userInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userInfo)
 
 	if err != nil {
@@ -22,7 +23,6 @@ func (db dbHandler) registerHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
 		return
 	}
-	log.Println("POST request to /register, data:", userInfo)
 
 	passwordHash, err := utils.HashPassword(userInfo.Password)
 
@@ -37,11 +37,18 @@ func (db dbHandler) registerHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("error in creating ID", userIdErr)
 	}
 
-	newUser := models.User{ID: userId, Username: userInfo.Username, Password: passwordHash, CreatedAt: time.Now()}
+	newUser := &models.User{ID: userId, Username: userInfo.Username, Password: passwordHash}
 	result := db.DB.Create(newUser)
+
+	// It is a hacky solution but GORM doesn't have an error type to check the unique key constraint so I am checking the substring in the error
+	if result.Error != nil && strings.Contains(result.Error.Error(), "(SQLSTATE 23505)") {
+		http.Error(w, fmt.Sprintf("Username %s is already taken", newUser.Username), http.StatusBadRequest)
+		return
+	}
+
 	if result.Error != nil {
 		log.Println("error in creating user", result.Error)
 	}
 
-	json.NewEncoder(w).Encode(newUser.ID)
+	json.NewEncoder(w).Encode(newUser)
 }

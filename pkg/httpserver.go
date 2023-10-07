@@ -9,11 +9,12 @@ import (
 	"github.com/rs/cors"
 
 	"github.com/FKuiv/LocalChat/pkg/db"
+	"github.com/FKuiv/LocalChat/pkg/handlers"
 )
 
 func StartHTTPServer() {
 	DB := db.Init()
-	dbHandler := New(DB)
+	dbHandler := handlers.New(DB)
 
 	muxRouter := mux.NewRouter()
 
@@ -22,7 +23,10 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
-	muxRouter.HandleFunc("/register", dbHandler.registerHandler).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/create", dbHandler.CreateUser).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/users", dbHandler.GetAllUsers).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/user/{id}", dbHandler.GetUserById).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/user/{id}", dbHandler.UpdateUser).Methods(http.MethodPatch)
 
 	handler := cors.Default().Handler(muxRouter)
 

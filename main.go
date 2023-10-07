@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/FKuiv/LocalChat/pkg/httpserver"
+	httpserver "github.com/FKuiv/LocalChat/pkg"
 )
 
 func main() {
