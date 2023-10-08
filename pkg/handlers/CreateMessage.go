@@ -9,7 +9,7 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-func (db dbHandler) SaveMessage(w http.ResponseWriter, r *http.Request) {
+func (db dbHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var message models.MessageRequest

@@ -23,12 +23,20 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
+
+	// User
 	muxRouter.HandleFunc("/create_user", dbHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", dbHandler.GetAllUsers).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", dbHandler.GetUserById).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", dbHandler.UpdateUser).Methods(http.MethodPatch)
 
-	muxRouter.HandleFunc("/message", dbHandler.SaveMessage).Methods(http.MethodPost)
+	// Group
+	muxRouter.HandleFunc("/group", dbHandler.CreateGroup).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/groups", dbHandler.GetAllGroups).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/group/{id}", dbHandler.GetGroupById).Methods(http.MethodGet)
+
+	// Message
+	muxRouter.HandleFunc("/message", dbHandler.CreateMessage).Methods(http.MethodPost)
 
 	handler := cors.Default().Handler(muxRouter)
 

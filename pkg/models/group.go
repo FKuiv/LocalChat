@@ -12,6 +12,6 @@ type Group struct {
 }
 
 type GroupRequest struct {
-	Name  string          `json:"name"`
-	Users []*UserForGroup `json:"users"`
+	Name    string   `json:"name"`
+	UserIDs []string `json:"user_ids"`
 }
