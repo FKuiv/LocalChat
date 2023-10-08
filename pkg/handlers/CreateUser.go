@@ -28,13 +28,14 @@ func (db dbHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Println("Error hashing the password", err)
-		http.Error(w, "Problem hashing the password", http.StatusBadGateway)
+		http.Error(w, "Problem hashing the password", http.StatusInternalServerError)
 	}
 
 	userId, userIdErr := gonanoid.New()
 
 	if userIdErr != nil {
 		log.Println("error in creating ID", userIdErr)
+		http.Error(w, "Error creating ID for user", http.StatusInternalServerError)
 	}
 
 	newUser := &models.User{ID: userId, Username: userInfo.Username, Password: passwordHash}
@@ -48,6 +49,8 @@ func (db dbHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if result.Error != nil {
 		log.Println("error in creating user", result.Error)
+		http.Error(w, "Error creating user", http.StatusInternalServerError)
+		return
 	}
 
 	json.NewEncoder(w).Encode(newUser)

@@ -8,6 +8,7 @@ type Group struct {
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Users     []*User   `gorm:"many2many:user_groups;" json:"users"`
+	Messages  []Message `json:"messages"` // Every group can have a lot of messages
 }
 
 type GroupRequest struct {

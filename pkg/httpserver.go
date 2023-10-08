@@ -23,10 +23,12 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
-	muxRouter.HandleFunc("/create", dbHandler.CreateUser).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/create_user", dbHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", dbHandler.GetAllUsers).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", dbHandler.GetUserById).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", dbHandler.UpdateUser).Methods(http.MethodPatch)
+
+	muxRouter.HandleFunc("/message", dbHandler.SaveMessage).Methods(http.MethodPost)
 
 	handler := cors.Default().Handler(muxRouter)
 

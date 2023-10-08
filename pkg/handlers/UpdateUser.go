@@ -46,6 +46,13 @@ func (db dbHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if newUserInfo.Username != "" {
+		usernameCheck := db.DB.Where("name = ?", newUserInfo.Username).First(&currentUser)
+
+		if usernameCheck.RowsAffected == 1 {
+			http.Error(w, "Username already exists", http.StatusBadRequest)
+			return
+		}
+
 		currentUser.Username = newUserInfo.Username
 	}
 
