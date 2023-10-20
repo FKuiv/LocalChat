@@ -16,3 +16,7 @@ type MessageRequest struct {
 	GroupID string `json:"group_id"`
 	Content string `json:"content"`
 }
+
+type UpdateMessage struct {
+	Content string `json:"content"`
+}
