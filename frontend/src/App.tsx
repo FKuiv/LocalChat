@@ -1,6 +1,6 @@
-import { Button, TextInput } from "@mantine/core";
-import "./App.styles.css";
 import { useEffect, useState } from "react";
+import { Button } from "./components/ui/button";
+import { Textarea } from "./components/ui/textarea";
 
 export default function App() {
   const [text, setText] = useState("");
@@ -14,16 +14,10 @@ export default function App() {
   };
 
   return (
-    <div>
-      <TextInput
-        mt="md"
-        label="Send message"
-        value={text}
-        onChange={(event) => setText(event.currentTarget.value)}
-      />
-      <Button mt="lg" onClick={handleClick}>
-        Send
-      </Button>
+    <div className="flex flex-col justify-center items-center pt-10 space-y-10">
+      <Textarea className="w-1/2" onChange={(event) => setText(event.target.value)} /> 
+      <Button onClick={handleClick}>Send</Button> 
+       
     </div>
   );
 }
