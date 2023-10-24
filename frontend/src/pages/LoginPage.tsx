@@ -1,25 +1,25 @@
-import { Button } from "../components/ui/button";
-import { Textarea } from "../components/ui/textarea";
-import { useEffect, useState } from "react";
+import CreateAccountCard from "@/components/login/CreateAccountCard";
+import LoginCard from "@/components/login/LoginCard";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function LoginPage() {
-  const [text, setText] = useState("");
-
-  const handleClick = () => {
-    alert(`The message: ${text}`);
-  };
-
-  useEffect(() => {
-    console.log(text);
-  }, [text]);
-
   return (
-    <div className="flex flex-col justify-center items-center pt-10 space-y-10">
-      <Textarea
-        className="w-1/2"
-        onChange={(event) => setText(event.target.value)}
-      />
-      <Button onClick={handleClick}>Send</Button>
+    <div className="flex flex-col justify-center items-center h-full">
+      <Tabs
+        defaultValue="createAccount"
+        className="lg:w-1/4 lg:h-1/2 w-4/5 h-3/5"
+      >
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="createAccount">Create account</TabsTrigger>
+          <TabsTrigger value="login">Login</TabsTrigger>
+        </TabsList>
+        <TabsContent value="createAccount">
+          <CreateAccountCard />
+        </TabsContent>
+        <TabsContent value="login">
+          <LoginCard />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
