@@ -1,90 +1,44 @@
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { accountSchema } from "@/zod_schemas/account";
-import ButtonFooter from "./ButtonFooter";
+import { TextInput, Button, Group, Box } from "@mantine/core";
+import { hasLength, useForm } from "@mantine/form";
 
 export default function CreateAccountCard() {
-  const form = useForm<z.infer<typeof accountSchema>>({
-    resolver: zodResolver(accountSchema),
-    defaultValues: {
+  const form = useForm({
+    initialValues: {
       username: "",
       password: "",
     },
+
+    validate: {
+      username: hasLength(
+        { min: 2, max: 20 },
+        "Username must be between 2-20 characters"
+      ),
+      password: hasLength(
+        { min: 4, max: 50 },
+        "Password must be between 4-50 characters"
+      ),
+    },
   });
 
-  const onSubmit = (values: z.infer<typeof accountSchema>) => {
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-  };
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create an account</CardTitle>
-      </CardHeader>
+    <Box maw={340} mx="auto">
+      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+        <TextInput
+          withAsterisk
+          label="Username"
+          {...form.getInputProps("username")}
+        />
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent>
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormDescription>
-                    This username is going to be displayed to everyone on the
-                    network.
-                  </FormDescription>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
+        <TextInput
+          withAsterisk
+          label="Password"
+          {...form.getInputProps("password")}
+        />
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Confirm password</FormLabel>
-                  <FormControl>
-                    <Input type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <ButtonFooter label="Create" />
-        </form>
-      </Form>
-    </Card>
+        <Group justify="flex-end" mt="md">
+          <Button type="submit">Create</Button>
+        </Group>
+      </form>
+    </Box>
   );
 }
