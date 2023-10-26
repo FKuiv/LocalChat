@@ -1,44 +1,12 @@
-import { TextInput, Button, Group, Box } from "@mantine/core";
-import { hasLength, useForm } from "@mantine/form";
+import { Login } from "@/types/Login";
+import UserLoginCard from "../ui/UserLoginCard";
+import { FC } from "react";
 
-export default function CreateAccountCard() {
-  const form = useForm({
-    initialValues: {
-      username: "",
-      password: "",
-    },
+const CreateAccountCard: FC = () => {
+  const handleSubmit = (values: Login) => {
+    console.log(values);
+  };
 
-    validate: {
-      username: hasLength(
-        { min: 2, max: 20 },
-        "Username must be between 2-20 characters"
-      ),
-      password: hasLength(
-        { min: 4, max: 50 },
-        "Password must be between 4-50 characters"
-      ),
-    },
-  });
-
-  return (
-    <Box maw={340} mx="auto">
-      <form onSubmit={form.onSubmit((values) => console.log(values))}>
-        <TextInput
-          withAsterisk
-          label="Username"
-          {...form.getInputProps("username")}
-        />
-
-        <TextInput
-          withAsterisk
-          label="Password"
-          {...form.getInputProps("password")}
-        />
-
-        <Group justify="flex-end" mt="md">
-          <Button type="submit">Create</Button>
-        </Group>
-      </form>
-    </Box>
-  );
-}
+  return <UserLoginCard onSubmit={handleSubmit} buttonLabel="Create" />;
+};
+export default CreateAccountCard;
