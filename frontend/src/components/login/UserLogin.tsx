@@ -2,7 +2,7 @@ import { FC } from "react";
 import UserLoginCard from "../ui/UserLoginCard";
 import { Login } from "@/types/Login";
 
-const LoginCard: FC = () => {
+const UserLogin: FC = () => {
   const handleSubmit = (values: Login) => {
     console.log(values);
   };
@@ -10,4 +10,4 @@ const LoginCard: FC = () => {
   return <UserLoginCard onSubmit={handleSubmit} buttonLabel="Login" />;
 };
 
-export default LoginCard;
+export default UserLogin;

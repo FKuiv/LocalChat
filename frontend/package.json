@@ -17,6 +17,7 @@
     "@mantine/modals": "^7.1.5",
     "@mantine/notifications": "^7.1.5",
     "@mantine/spotlight": "^7.1.5",
+    "axios": "^1.6.0",
     "dayjs": "^1.11.10",
     "lucide-react": "^0.288.0",
     "react": "^18.2.0",

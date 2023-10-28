@@ -27,7 +27,7 @@ const UserLoginCard: FC<userLoginCardType> = (props) => {
   });
 
   return (
-    <Box mx="auto" className="border" maw="60%">
+    <Box mx="auto" maw="60%">
       <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
         <Flex direction="column" gap="xl">
           <TextInput
@@ -40,6 +40,7 @@ const UserLoginCard: FC<userLoginCardType> = (props) => {
           <TextInput
             withAsterisk
             label="Password"
+            type="password"
             {...form.getInputProps("password")}
           />
 
