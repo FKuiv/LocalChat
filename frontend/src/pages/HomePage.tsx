@@ -2,6 +2,7 @@ import { FC } from "react";
 import { AppShell, Burger } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Navbar from "@/components/navigation/Navbar";
+import Logo from "@/components/ui/Logo";
 
 const HomePage: FC = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -10,11 +11,10 @@ const HomePage: FC = () => {
     <AppShell
       header={{ height: 60 }}
       navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
-      padding="md"
     >
       <AppShell.Header>
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-        <div>Logo</div>
+        <Logo />
       </AppShell.Header>
 
       <AppShell.Navbar p="md">

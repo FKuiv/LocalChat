@@ -27,7 +27,7 @@ const UserLoginCard: FC<userLoginCardType> = (props) => {
   });
 
   return (
-    <Box mx="auto" maw="60%">
+    <Box mx="auto" maw="80%">
       <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
         <Flex direction="column" gap="xl">
           <TextInput
