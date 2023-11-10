@@ -10,6 +10,7 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/db"
 	"github.com/FKuiv/LocalChat/pkg/handlers"
+	"github.com/FKuiv/LocalChat/pkg/websocket"
 )
 
 func StartHTTPServer() {
@@ -23,6 +24,7 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
+	muxRouter.HandleFunc("/ws", websocket.WsHandler)
 
 	// User
 	muxRouter.HandleFunc("/user", dbHandler.CreateUser).Methods(http.MethodPost)
