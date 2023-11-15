@@ -26,6 +26,8 @@ func StartHTTPServer() {
 	// Endpoints
 	muxRouter.HandleFunc("/ws", websocket.WsHandler)
 
+	muxRouter.HandleFunc("/login", dbHandler.Login).Methods(http.MethodPost)
+
 	// User
 	muxRouter.HandleFunc("/user", dbHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", dbHandler.GetAllUsers).Methods(http.MethodGet)

@@ -1,17 +1,9 @@
 package websocket
 
 import (
-	"fmt"
 	"log"
 	"sync"
-
-	"github.com/gorilla/websocket"
 )
-
-type Client struct {
-	conn *websocket.Conn
-	send chan []byte
-}
 
 type Hub struct {
 	clients    map[string]*Client
@@ -28,10 +20,6 @@ func NewHub() *Hub {
 		unregister: make(chan *Client),
 		broadcast:  make(chan []byte),
 	}
-}
-
-func (c *Client) ID() string {
-	return fmt.Sprintf("%p", c)
 }
 
 func (h *Hub) Run() {
