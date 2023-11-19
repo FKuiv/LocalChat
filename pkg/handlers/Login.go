@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-func (db dbHandler) Login(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var userInfo models.UserRequest
@@ -21,10 +23,6 @@ func (db dbHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err != nil {
-		log.Println("Error hashing the password", err)
-		http.Error(w, "Problem hashing the password", http.StatusInternalServerError)
-	}
 	var currentUser models.User
 	db.DB.Find(&currentUser, "username = ?", userInfo.Username)
 
@@ -33,5 +31,11 @@ func (db dbHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Make DB session
+	sessionId, idErr := gonanoid.New()
+	utils.IDErr(idErr, w)
+	newSession := &models.Session{ID: sessionId, UserID: currentUser.ID, ExpiresAt: time.Now().AddDate(0, 0, 7)}
+	result := db.DB.Create(newSession)
+	utils.CreationErr(result.Error, w)
+
+	json.NewEncoder(w).Encode(newSession)
 }

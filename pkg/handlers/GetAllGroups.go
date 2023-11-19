@@ -8,7 +8,7 @@ import (
 	"github.com/FKuiv/LocalChat/pkg/models"
 )
 
-func (db dbHandler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var groups []models.Group
 

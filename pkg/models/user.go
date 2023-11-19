@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
 	ID        string    `json:"id" gorm:"primaryKey"`
@@ -10,6 +12,7 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Messages  []Message `json:"messages"`
 	Groups    []*Group  `gorm:"many2many:user_groups;" json:"groups"`
+	Session   Session   `json:"session"`
 }
 
 type UserRequest struct {

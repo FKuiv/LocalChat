@@ -8,7 +8,7 @@ import (
 	"github.com/FKuiv/LocalChat/pkg/models"
 )
 
-func (db dbHandler) GetAllMessages(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) GetAllMessages(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var messages []models.Message

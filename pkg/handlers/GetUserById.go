@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db dbHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var user models.User

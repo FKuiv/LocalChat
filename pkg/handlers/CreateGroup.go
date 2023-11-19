@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db dbHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var group models.GroupRequest

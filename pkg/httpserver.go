@@ -10,6 +10,7 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/db"
 	"github.com/FKuiv/LocalChat/pkg/handlers"
+	"github.com/FKuiv/LocalChat/pkg/middleware"
 	"github.com/FKuiv/LocalChat/pkg/websocket"
 )
 
@@ -49,5 +50,5 @@ func StartHTTPServer() {
 	handler := cors.Default().Handler(muxRouter)
 
 	log.Println("starting http server at localhost:8000")
-	http.ListenAndServe(":8000", handler)
+	http.ListenAndServe(":8000", middleware.CheckUserSession(handler, dbHandler))
 }

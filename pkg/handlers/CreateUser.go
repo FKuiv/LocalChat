@@ -12,7 +12,7 @@ import (
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-func (db dbHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var userInfo models.UserRequest
@@ -33,23 +33,14 @@ func (db dbHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	userId, userIdErr := gonanoid.New()
 
-	if userIdErr != nil {
-		log.Println("error in creating ID", userIdErr)
-		http.Error(w, "Error creating ID for user", http.StatusInternalServerError)
-	}
+	utils.IDErr(userIdErr, w)
 
 	newUser := &models.User{ID: userId, Username: userInfo.Username, Password: passwordHash}
 	result := db.DB.Create(newUser)
-
+	utils.CreationErr(result.Error, w)
 	// It is a hacky solution but GORM doesn't have an error type to check the unique key constraint so I am checking the substring in the error
 	if result.Error != nil && strings.Contains(result.Error.Error(), "(SQLSTATE 23505)") {
 		http.Error(w, fmt.Sprintf("Username %s is already taken", newUser.Username), http.StatusBadRequest)
-		return
-	}
-
-	if result.Error != nil {
-		log.Println("error in creating user", result.Error)
-		http.Error(w, "Error creating user", http.StatusInternalServerError)
 		return
 	}
 

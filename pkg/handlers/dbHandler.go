@@ -2,10 +2,10 @@ package handlers
 
 import "gorm.io/gorm"
 
-type dbHandler struct {
+type DBHandler struct {
 	DB *gorm.DB
 }
 
-func New(db *gorm.DB) dbHandler {
-	return dbHandler{db}
+func New(db *gorm.DB) DBHandler {
+	return DBHandler{db}
 }

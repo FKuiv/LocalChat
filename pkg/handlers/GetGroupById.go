@@ -12,7 +12,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db dbHandler) GetGroupById(w http.ResponseWriter, r *http.Request) {
+func (db DBHandler) GetGroupById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var group models.Group
