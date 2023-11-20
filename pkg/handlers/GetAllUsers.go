@@ -9,8 +9,6 @@ import (
 )
 
 func (db DBHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var users []models.User
 
 	result := db.DB.Find(&users)

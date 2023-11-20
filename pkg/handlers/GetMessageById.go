@@ -13,8 +13,6 @@ import (
 )
 
 func (db DBHandler) GetMessageById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var message models.Message
 	vars := mux.Vars(r)
 	messageId, idOk := vars["id"]

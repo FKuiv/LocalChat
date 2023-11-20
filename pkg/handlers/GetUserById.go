@@ -13,8 +13,6 @@ import (
 )
 
 func (db DBHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var user models.User
 	vars := mux.Vars(r)
 	userId, idOk := vars["id"]

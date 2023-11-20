@@ -10,8 +10,6 @@ import (
 )
 
 func (db DBHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var message models.MessageRequest
 	err := json.NewDecoder(r.Body).Decode(&message)
 

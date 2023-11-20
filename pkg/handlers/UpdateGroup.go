@@ -13,8 +13,6 @@ import (
 )
 
 func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var newGroupInfo models.GroupRequest
 	err := json.NewDecoder(r.Body).Decode(&newGroupInfo)
 

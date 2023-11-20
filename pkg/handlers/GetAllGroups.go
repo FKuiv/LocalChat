@@ -9,7 +9,6 @@ import (
 )
 
 func (db DBHandler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	var groups []models.Group
 
 	// A way to also return users

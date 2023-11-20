@@ -14,8 +14,6 @@ import (
 )
 
 func (db DBHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var newUserInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&newUserInfo)
 

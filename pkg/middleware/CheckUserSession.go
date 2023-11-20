@@ -13,6 +13,11 @@ import (
 
 func CheckUserSession(next http.Handler, db handlers.DBHandler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.RequestURI == "/login" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		var session models.Session
 		userId := r.Header.Get("UserId")
 		result := db.DB.First(&session, "user_id = ?", userId)
@@ -25,10 +30,12 @@ func CheckUserSession(next http.Handler, db handlers.DBHandler) http.Handler {
 		switch comparison := session.ExpiresAt.Compare(time.Now()); comparison {
 		case -1:
 			// WRONG. The session has expired
+			http.Error(w, "User session expired", http.StatusUnauthorized)
+			db.DB.Delete(&session, session.ID)
+			return
 		default:
 			// The session is valid
+			next.ServeHTTP(w, r)
 		}
-
-		next.ServeHTTP(w, r)
 	})
 }

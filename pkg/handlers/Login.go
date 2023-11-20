@@ -12,8 +12,6 @@ import (
 )
 
 func (db DBHandler) Login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var userInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userInfo)
 

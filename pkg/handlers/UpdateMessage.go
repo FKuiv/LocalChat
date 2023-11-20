@@ -13,8 +13,6 @@ import (
 )
 
 func (db DBHandler) UpdateMessage(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
 	var newMessageInfo models.UpdateMessage
 	err := json.NewDecoder(r.Body).Decode(&newMessageInfo)
 

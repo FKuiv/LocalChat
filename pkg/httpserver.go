@@ -50,5 +50,5 @@ func StartHTTPServer() {
 	handler := cors.Default().Handler(muxRouter)
 
 	log.Println("starting http server at localhost:8000")
-	http.ListenAndServe(":8000", middleware.CheckUserSession(handler, dbHandler))
+	http.ListenAndServe(":8000", middleware.CheckUserSession(middleware.SetHeaders(handler), dbHandler))
 }
