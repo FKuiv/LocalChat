@@ -16,10 +16,7 @@ import (
 func (db DBHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var newUserInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&newUserInfo)
-
-	if err != nil {
-		log.Println("Error in /user PATCH", err)
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+	if utils.DecodingErr(err, "/user", w) {
 		return
 	}
 
@@ -27,8 +24,7 @@ func (db DBHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userId, idOk := vars["id"]
 	var currentUser models.User
 
-	if !idOk {
-		http.Error(w, "User ID not provided", http.StatusBadRequest)
+	if utils.MuxVarsNotProvided(idOk, "User ID", w) {
 		return
 	}
 

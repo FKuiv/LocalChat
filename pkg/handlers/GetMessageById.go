@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -17,8 +18,7 @@ func (db DBHandler) GetMessageById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	messageId, idOk := vars["id"]
 
-	if !idOk {
-		http.Error(w, "Message ID not provided", http.StatusBadRequest)
+	if utils.MuxVarsNotProvided(idOk, "Message ID", w) {
 		return
 	}
 

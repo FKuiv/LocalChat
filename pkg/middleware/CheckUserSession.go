@@ -13,7 +13,8 @@ import (
 
 func CheckUserSession(next http.Handler, db handlers.DBHandler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.RequestURI == "/login" {
+		// Skip these endpoints
+		if r.RequestURI == "/login" || r.RequestURI == "/user" {
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -23,7 +24,7 @@ func CheckUserSession(next http.Handler, db handlers.DBHandler) http.Handler {
 		result := db.DB.First(&session, "user_id = ?", userId)
 
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			http.Error(w, fmt.Sprintf("User with ID: %s not found", userId), http.StatusNotFound)
+			http.Error(w, fmt.Sprintf("User with ID: %s does not have a session", userId), http.StatusUnauthorized)
 			return
 		}
 

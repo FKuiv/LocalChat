@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -15,10 +16,7 @@ import (
 func (db DBHandler) UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	var newMessageInfo models.UpdateMessage
 	err := json.NewDecoder(r.Body).Decode(&newMessageInfo)
-
-	if err != nil {
-		log.Println("Error in /message PATCH", err)
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+	if utils.DecodingErr(err, "/message", w) {
 		return
 	}
 
@@ -26,8 +24,7 @@ func (db DBHandler) UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	messageId, idOk := vars["id"]
 	var currentMessage models.Message
 
-	if !idOk {
-		http.Error(w, "Message ID not provided", http.StatusBadRequest)
+	if utils.MuxVarsNotProvided(idOk, "Message ID", w) {
 		return
 	}
 

@@ -6,16 +6,14 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
 func (db DBHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
 	var message models.MessageRequest
 	err := json.NewDecoder(r.Body).Decode(&message)
-
-	if err != nil {
-		log.Println("Error in /message POST", err)
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+	if utils.DecodingErr(err, "/message", w) {
 		return
 	}
 

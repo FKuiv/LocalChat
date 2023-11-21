@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -17,8 +18,7 @@ func (db DBHandler) GetGroupById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	groupId, idOk := vars["id"]
 
-	if !idOk {
-		http.Error(w, "Group ID not provided", http.StatusBadRequest)
+	if utils.MuxVarsNotProvided(idOk, "Group ID", w) {
 		return
 	}
 

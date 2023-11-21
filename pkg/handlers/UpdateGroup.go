@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	"github.com/gorilla/mux"
 	"gorm.io/gorm"
 )
@@ -15,10 +16,7 @@ import (
 func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 	var newGroupInfo models.GroupRequest
 	err := json.NewDecoder(r.Body).Decode(&newGroupInfo)
-
-	if err != nil {
-		log.Println("Error in /group PATCH", err)
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+	if utils.DecodingErr(err, "/group", w) {
 		return
 	}
 
@@ -26,8 +24,7 @@ func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 	groupId, idOk := vars["id"]
 	var currentGroup models.Group
 
-	if !idOk {
-		http.Error(w, "Group ID not provided", http.StatusBadRequest)
+	if utils.MuxVarsNotProvided(idOk, "Group ID", w) {
 		return
 	}
 
@@ -40,12 +37,14 @@ func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 
 	if result.Error != nil {
 		log.Println("Error getting the group", result.Error)
+		return
 	}
 
 	if newGroupInfo.Name != "" {
 		currentGroup.Name = newGroupInfo.Name
 	} else {
 		http.Error(w, "Group name cannot be empty", http.StatusBadRequest)
+		return
 	}
 
 	if len(newGroupInfo.UserIDs) != 0 {
@@ -66,6 +65,14 @@ func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 		currentGroup.Users = users
 	} else {
 		http.Error(w, "A group cannot have 0 users", http.StatusBadRequest)
+		return
+	}
+
+	if len(newGroupInfo.Admins) != 0 {
+		currentGroup.Admins = newGroupInfo.Admins
+	} else {
+		http.Error(w, "Group cannot have 0 admins", http.StatusBadRequest)
+		return
 	}
 
 	db.DB.Save(&currentGroup)

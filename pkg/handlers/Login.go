@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"time"
 
@@ -14,10 +13,7 @@ import (
 func (db DBHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var userInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userInfo)
-
-	if err != nil {
-		log.Println("Error in /login", err)
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+	if utils.DecodingErr(err, "/login", w) {
 		return
 	}
 
@@ -30,10 +26,14 @@ func (db DBHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	sessionId, idErr := gonanoid.New()
-	utils.IDErr(idErr, w)
+	if utils.IDCreationErr(idErr, w) {
+		return
+	}
 	newSession := &models.Session{ID: sessionId, UserID: currentUser.ID, ExpiresAt: time.Now().AddDate(0, 0, 7)}
 	result := db.DB.Create(newSession)
-	utils.CreationErr(result.Error, w)
+	if utils.CreationErr(result.Error, w) {
+		return
+	}
 
 	json.NewEncoder(w).Encode(newSession)
 }

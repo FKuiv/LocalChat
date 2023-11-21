@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"gorm.io/gorm"
 )
@@ -14,10 +15,7 @@ import (
 func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	var group models.GroupRequest
 	err := json.NewDecoder(r.Body).Decode(&group)
-
-	if err != nil {
-		log.Println("Error in /group POST", err)
-		http.Error(w, "Invalid JSON data", http.StatusBadRequest)
+	if utils.DecodingErr(err, "/group", w) {
 		return
 	}
 
@@ -31,8 +29,7 @@ func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	var users []*models.User
 
-	for i, userId := range group.UserIDs {
-		log.Println("index", i)
+	for _, userId := range group.UserIDs {
 		var user *models.User
 		result := db.DB.First(&user, "id = ?", userId)
 
@@ -44,9 +41,7 @@ func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	log.Println("Users array", users)
-
-	newGroup := &models.Group{ID: groupId, Name: group.Name, Users: users}
+	newGroup := &models.Group{ID: groupId, Name: group.Name, Users: users, Admins: group.Admins}
 	result := db.DB.Create(newGroup)
 
 	if result.Error != nil {
