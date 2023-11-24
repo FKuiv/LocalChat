@@ -19,11 +19,14 @@ func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(group.Admins) == 0 || len(group.UserIDs) == 0 {
+		http.Error(w, "There needs to be at least 1 admin and user in group", http.StatusBadRequest)
+		return
+	}
+
 	groupId, groupIdErr := gonanoid.New()
 
-	if groupIdErr != nil {
-		log.Println("Error creating group ID", groupIdErr)
-		http.Error(w, "Error creating group ID", http.StatusInternalServerError)
+	if utils.IDCreationErr(groupIdErr, w) {
 		return
 	}
 
@@ -44,9 +47,7 @@ func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	newGroup := &models.Group{ID: groupId, Name: group.Name, Users: users, Admins: group.Admins}
 	result := db.DB.Create(newGroup)
 
-	if result.Error != nil {
-		log.Println("Error creating the group", result.Error)
-		http.Error(w, "Error creating the group", http.StatusInternalServerError)
+	if utils.CreationErr(result.Error, w) {
 		return
 	}
 

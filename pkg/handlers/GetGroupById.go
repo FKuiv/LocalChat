@@ -18,7 +18,7 @@ func (db DBHandler) GetGroupById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	groupId, idOk := vars["id"]
 
-	if utils.MuxVarsNotProvided(idOk, "Group ID", w) {
+	if utils.MuxVarsNotProvided(idOk, groupId, "Group ID", w) {
 		return
 	}
 

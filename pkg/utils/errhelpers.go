@@ -47,8 +47,8 @@ func ItemNotFound(err error, item string, w http.ResponseWriter) bool {
 	return false
 }
 
-func MuxVarsNotProvided(isOk bool, itemName string, w http.ResponseWriter) bool {
-	if !isOk {
+func MuxVarsNotProvided(isOk bool, value string, itemName string, w http.ResponseWriter) bool {
+	if !isOk || value == "" {
 		http.Error(w, fmt.Sprintf("%s not provided", itemName), http.StatusBadRequest)
 		return true
 	}

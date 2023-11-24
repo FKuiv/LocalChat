@@ -11,7 +11,7 @@ import (
 
 func (db DBHandler) DeleteMessage(w http.ResponseWriter, r *http.Request) {
 	messageId, idOk := mux.Vars(r)["id"]
-	if utils.MuxVarsNotProvided(idOk, "Message ID", w) {
+	if utils.MuxVarsNotProvided(idOk, messageId, "Message ID", w) {
 		return
 	}
 

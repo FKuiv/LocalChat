@@ -24,7 +24,7 @@ func (db DBHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	userId, idOk := vars["id"]
 	var currentUser models.User
 
-	if utils.MuxVarsNotProvided(idOk, "User ID", w) {
+	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
 		return
 	}
 

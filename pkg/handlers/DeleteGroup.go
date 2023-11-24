@@ -11,7 +11,8 @@ import (
 
 func (db DBHandler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 	groupId, idOk := mux.Vars(r)["id"]
-	if utils.MuxVarsNotProvided(idOk, "Group ID", w) {
+
+	if utils.MuxVarsNotProvided(idOk, groupId, "Group ID", w) {
 		return
 	}
 
@@ -44,11 +45,24 @@ func (db DBHandler) DeleteGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := db.DB.Delete(&group).Error; err != nil {
-		fmt.Println("Error deleting group:", err)
-		http.Error(w, "Failed to delete group", http.StatusInternalServerError)
+	if err := db.DB.Select("Users").Delete(&group).Error; err != nil {
+		fmt.Println("Error removing references from user_groups table", err)
+		http.Error(w, "Failed to remove references from user_groups table", http.StatusInternalServerError)
 		return
 	}
+
+	// Remove references to the group from the user_groups join table
+	// if err := db.DB.Model(&models.User{}).Association("Groups").Delete(&group); err != nil {
+	// 	fmt.Println("Error removing references from user_groups table", err)
+	// 	http.Error(w, "Failed to remove references from user_groups table", http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// if err := db.DB.Delete(&group).Error; err != nil {
+	// 	fmt.Println("Error deleting group:", err)
+	// 	http.Error(w, "Failed to delete group", http.StatusInternalServerError)
+	// 	return
+	// }
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Group deleted successfully"))

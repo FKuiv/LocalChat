@@ -1,6 +1,11 @@
 package models
 
-import "time"
+import (
+	"database/sql/driver"
+	"encoding/json"
+	"errors"
+	"time"
+)
 
 type Group struct {
 	ID        string    `json:"id" gorm:"primaryKey"`
@@ -9,11 +14,28 @@ type Group struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Users     []*User   `gorm:"many2many:user_groups;" json:"users"`
 	Messages  []Message `json:"messages"` // Every group can have a lot of messages
-	Admins    []string  `gorm:"type:text" json:"admins"`
+	Admins    Admins    `gorm:"type:text" json:"admins"`
 }
 
 type GroupRequest struct {
 	Name    string   `json:"name"`
 	UserIDs []string `json:"user_ids"`
-	Admins  []string `json:"admins"`
+	Admins  Admins   `json:"admins"`
+}
+
+type Admins []string
+
+func (a *Admins) Scan(value interface{}) error {
+	switch v := value.(type) {
+	case string:
+		return json.Unmarshal([]byte(v), a)
+	case []byte:
+		return json.Unmarshal(v, a)
+	default:
+		return errors.New("unsupported Scan, storing driver.Value type " + string(value.([]byte)) + " into type *Admins")
+	}
+}
+
+func (a Admins) Value() (driver.Value, error) {
+	return json.Marshal(a)
 }

@@ -24,11 +24,11 @@ func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 	groupId, idOk := vars["id"]
 	var currentGroup models.Group
 
-	if utils.MuxVarsNotProvided(idOk, "Group ID", w) {
+	if utils.MuxVarsNotProvided(idOk, groupId, "Group ID", w) {
 		return
 	}
 
-	result := db.DB.First(&currentGroup, "id = ?", groupId)
+	result := db.DB.Where("id = ?", groupId).First(&currentGroup)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		http.Error(w, fmt.Sprintf("Group with ID: %s not found", groupId), http.StatusNotFound)
@@ -37,6 +37,7 @@ func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 
 	if result.Error != nil {
 		log.Println("Error getting the group", result.Error)
+		http.Error(w, "Error getting the group", http.StatusInternalServerError)
 		return
 	}
 
@@ -56,6 +57,7 @@ func (db DBHandler) UpdateGroup(w http.ResponseWriter, r *http.Request) {
 
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 				log.Println("Error finding user", result.Error)
+				http.Error(w, "Error finding user", http.StatusInternalServerError)
 			} else {
 				users = append(users, user)
 			}

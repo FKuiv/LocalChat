@@ -18,7 +18,7 @@ func (db DBHandler) GetMessageById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	messageId, idOk := vars["id"]
 
-	if utils.MuxVarsNotProvided(idOk, "Message ID", w) {
+	if utils.MuxVarsNotProvided(idOk, messageId, "Message ID", w) {
 		return
 	}
 

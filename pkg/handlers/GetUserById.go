@@ -18,7 +18,7 @@ func (db DBHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId, idOk := vars["id"]
 
-	if utils.MuxVarsNotProvided(idOk, "User ID", w) {
+	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
 		return
 	}
 

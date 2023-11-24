@@ -24,7 +24,7 @@ func (db DBHandler) UpdateMessage(w http.ResponseWriter, r *http.Request) {
 	messageId, idOk := vars["id"]
 	var currentMessage models.Message
 
-	if utils.MuxVarsNotProvided(idOk, "Message ID", w) {
+	if utils.MuxVarsNotProvided(idOk, messageId, "Message ID", w) {
 		return
 	}
 
