@@ -44,7 +44,7 @@ func (db DBHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	newGroup := &models.Group{ID: groupId, Name: group.Name, Users: users, Admins: group.Admins}
+	newGroup := &models.Group{ID: groupId, Name: group.Name, Users: users, Admins: group.Admins, IsDm: group.IsDm}
 	result := db.DB.Create(newGroup)
 
 	if utils.CreationErr(result.Error, w) {

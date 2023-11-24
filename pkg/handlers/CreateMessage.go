@@ -17,6 +17,7 @@ func (db DBHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userId := r.Header.Get("UserId")
 	messageId, messageIdErr := gonanoid.New()
 
 	if messageIdErr != nil {
@@ -25,7 +26,7 @@ func (db DBHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newMessage := &models.Message{ID: messageId, Content: message.Content, UserID: message.UserID, GroupID: message.GroupID}
+	newMessage := &models.Message{ID: messageId, Content: message.Content, UserID: userId, GroupID: message.GroupID}
 	result := db.DB.Create(newMessage)
 
 	if result.Error != nil {

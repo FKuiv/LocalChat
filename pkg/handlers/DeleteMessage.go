@@ -24,7 +24,7 @@ func (db DBHandler) DeleteMessage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if message.UserID != userId {
+	if message.UserID != userId && message.UserID != "" {
 		http.Error(w, "User does not own this message, therefore cannot delete it", http.StatusForbidden)
 		return
 	}

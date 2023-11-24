@@ -11,7 +11,3 @@ type Session struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	ExpiresAt time.Time `json:"expires_at"`
 }
-
-type SessionRequest struct {
-	UserID string `json:"user_id"`
-}

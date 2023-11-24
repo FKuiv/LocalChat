@@ -4,6 +4,8 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strings"
 	"time"
 )
 
@@ -15,12 +17,14 @@ type Group struct {
 	Users     []*User   `gorm:"many2many:user_groups;" json:"users"`
 	Messages  []Message `json:"messages"` // Every group can have a lot of messages
 	Admins    Admins    `gorm:"type:text" json:"admins"`
+	IsDm      bool      `json:"isdm" gorm:"not null"`
 }
 
 type GroupRequest struct {
 	Name    string   `json:"name"`
 	UserIDs []string `json:"user_ids"`
 	Admins  Admins   `json:"admins"`
+	IsDm    bool     `json:"isdm"`
 }
 
 type Admins []string
@@ -28,6 +32,10 @@ type Admins []string
 func (a *Admins) Scan(value interface{}) error {
 	switch v := value.(type) {
 	case string:
+		if !strings.HasPrefix(v, "[") {
+			newString := fmt.Sprintf("[\"%s\"]", v)
+			return json.Unmarshal([]byte(newString), a)
+		}
 		return json.Unmarshal([]byte(v), a)
 	case []byte:
 		return json.Unmarshal(v, a)

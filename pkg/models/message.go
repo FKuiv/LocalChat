@@ -17,7 +17,6 @@ type Message struct {
 }
 
 type MessageRequest struct {
-	UserID  string `json:"user_id"`
 	GroupID string `json:"group_id"`
 	Content string `json:"content"`
 }

@@ -34,6 +34,7 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/users", dbHandler.GetAllUsers).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", dbHandler.GetUserById).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", dbHandler.UpdateUser).Methods(http.MethodPatch)
+	muxRouter.HandleFunc("/user_delete", dbHandler.DeleteUser).Methods(http.MethodDelete)
 
 	// Group
 	muxRouter.HandleFunc("/group", dbHandler.CreateGroup).Methods(http.MethodPost)
