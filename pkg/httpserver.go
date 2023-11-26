@@ -18,6 +18,9 @@ func StartHTTPServer() {
 	DB := db.Init()
 	dbHandler := handlers.New(DB)
 
+	hub := websocket.NewHub()
+	go hub.Run()
+
 	muxRouter := mux.NewRouter()
 
 	muxRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -25,7 +28,7 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
-	muxRouter.HandleFunc("/ws", websocket.WsHandler)
+	muxRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { websocket.WsHandler(hub, w, r) })
 
 	muxRouter.HandleFunc("/login", dbHandler.Login).Methods(http.MethodPost)
 

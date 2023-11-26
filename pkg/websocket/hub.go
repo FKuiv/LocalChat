@@ -27,16 +27,16 @@ func (h *Hub) Run() {
 		select {
 		case client := <-h.register:
 			h.mutex.Lock()
-			h.clients[client.ID()] = client
+			h.clients[client.ID] = client
 			h.mutex.Unlock()
-			log.Printf("User %s registered. Total users: %d", client.ID(), len(h.clients))
+			log.Printf("User %s registered. Total users: %d", client.ID, len(h.clients))
 
 		case client := <-h.unregister:
 			h.mutex.Lock()
-			delete(h.clients, client.ID())
+			delete(h.clients, client.ID)
 			close(client.send)
 			h.mutex.Unlock()
-			log.Printf("User %s unregistered. Total users: %d", client.ID(), len(h.clients))
+			log.Printf("User %s unregistered. Total users: %d", client.ID, len(h.clients))
 
 		case message := <-h.broadcast:
 			h.mutex.Lock()
@@ -45,7 +45,7 @@ func (h *Hub) Run() {
 				case client.send <- message:
 				default:
 					close(client.send)
-					delete(h.clients, client.ID())
+					delete(h.clients, client.ID)
 				}
 			}
 			h.mutex.Unlock()

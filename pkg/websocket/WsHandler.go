@@ -14,28 +14,19 @@ var wsConnUpgrader = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true }, // Currently let everyone to connect
 }
 
-func WsHandler(w http.ResponseWriter, r *http.Request) {
+func WsHandler(hub *Hub, w http.ResponseWriter, r *http.Request) {
+	userId := r.Header.Get("UserId")
 	conn, err := wsConnUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
+		fmt.Println(err)
 		return
 	}
-	defer conn.Close()
 
-	for {
-		messageType, message, err := conn.ReadMessage()
-		if err != nil {
-			log.Println(err)
-			return
-		}
+	client := &Client{hub: hub, ID: userId, socket: conn, send: make(chan []byte, 256)}
+	fmt.Println("New ws client:", client)
+	client.hub.register <- client
 
-		fmt.Println("Received message:", string(message))
-
-		err = conn.WriteMessage(messageType, []byte("Hi from backend"))
-
-		if err != nil {
-			log.Println(err)
-			return
-		}
-	}
+	go client.write()
+	go client.read()
 }
