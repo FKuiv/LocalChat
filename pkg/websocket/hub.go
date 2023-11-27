@@ -13,6 +13,12 @@ type Hub struct {
 	mutex      sync.Mutex
 }
 
+type WsMessage struct {
+	UserID  string `json:"user_id"`  // aka the Author of the message
+	GroupID string `json:"group_id"` // to filter the message into the right chat
+	Content string `json:"content"`
+}
+
 func NewHub() *Hub {
 	return &Hub{
 		clients:    make(map[string]*Client),

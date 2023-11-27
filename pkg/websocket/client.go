@@ -14,7 +14,7 @@ type Client struct {
 	ID     string
 	// Channel for sending and receving messages from other clients
 	send   chan []byte
-	groups []*Group
+	groups []*WsGroup
 }
 
 func (c *Client) read() {

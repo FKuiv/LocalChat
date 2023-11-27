@@ -1,5 +1,5 @@
 package websocket
 
-type Group struct {
+type WsGroup struct {
 	clients []*Client
 }

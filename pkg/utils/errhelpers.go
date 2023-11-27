@@ -54,3 +54,14 @@ func MuxVarsNotProvided(isOk bool, value string, itemName string, w http.Respons
 	}
 	return false
 }
+
+func ItemFetchError(err error, item string, w http.ResponseWriter) bool {
+	text := fmt.Sprintf("Error getting %s", item)
+	if err != nil {
+		log.Println(text, err)
+		http.Error(w, text, http.StatusInternalServerError)
+		return true
+	}
+
+	return false
+}
