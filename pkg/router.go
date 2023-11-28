@@ -3,29 +3,18 @@ package pkg
 import (
 	"fmt"
 	"log"
+
 	"net/http"
 
+	"github.com/FKuiv/LocalChat/pkg/middleware"
+	"github.com/FKuiv/LocalChat/pkg/websocket"
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
-
-	"github.com/FKuiv/LocalChat/pkg/controller"
-	"github.com/FKuiv/LocalChat/pkg/db"
-	"github.com/FKuiv/LocalChat/pkg/middleware"
-	"github.com/FKuiv/LocalChat/pkg/repos"
-	"github.com/FKuiv/LocalChat/pkg/websocket"
 )
 
-func StartHTTPServer() {
-	dbconn := db.Init()
+var muxRouter = mux.NewRouter()
 
-	repositories := repos.InitRepositories(dbconn.GetDB())
-	controllers := controller.InitControllers(repositories)
-
-	hub := websocket.NewHub()
-	go hub.Run()
-
-	muxRouter := mux.NewRouter()
-
+func InitRouter(userHandler *user.Handler, wsHandler *ws.Handler) {
 	muxRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Simple Go server for LocalChat")
 	}).Methods(http.MethodGet)
@@ -60,4 +49,9 @@ func StartHTTPServer() {
 
 	log.Println("starting http server at localhost:8000")
 	http.ListenAndServe(":8000", middleware.CheckUserSession(middleware.SetHeaders(handler), dbHandler))
+}
+
+func Start() {
+	log.Println("Server listening on http://localhost:8000")
+	log.Fatal(http.ListenAndServe(":8000", muxRouter))
 }

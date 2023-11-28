@@ -10,7 +10,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init() *gorm.DB {
+type Database struct {
+	DB *gorm.DB
+}
+
+func Init() *Database {
 	enverr := godotenv.Load()
 	if enverr != nil {
 		fmt.Println("Error loading the env file")
@@ -26,10 +30,15 @@ func Init() *gorm.DB {
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 
 	if err != nil {
+		fmt.Println("Error opening connection to database")
 		panic("Failed to connect to the database")
 	}
 
 	db.AutoMigrate(&models.User{}, &models.Message{}, &models.Group{}, &models.Session{})
 
-	return db
+	return &Database{DB: db}
+}
+
+func (db *Database) GetDB() *gorm.DB {
+	return db.DB
 }

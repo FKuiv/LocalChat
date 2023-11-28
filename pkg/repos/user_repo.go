@@ -1,4 +1,4 @@
-package repository
+package repos
 
 import (
 	"github.com/FKuiv/LocalChat/pkg/models"
