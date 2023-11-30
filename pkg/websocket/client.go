@@ -40,20 +40,12 @@ func (c *Client) read() {
 func (c *Client) write() {
 	defer c.socket.Close()
 
-	for {
-		select {
-		case message, ok := <-c.send:
-			if !ok {
-				c.socket.WriteMessage(websocket.CloseMessage, []byte{})
-				return
-			}
-
-			fmt.Println("This message:", []byte(message), "for user:", c.Username)
-			err := c.socket.WriteMessage(websocket.TextMessage, message)
-			if err != nil {
-				fmt.Printf("Error writing to WebSocket for client %s: %v\n", c.ID, err)
-				return
-			}
+	for message := range c.send {
+		fmt.Println("This message:", []byte(message), "for user:", c.Username)
+		err := c.socket.WriteMessage(websocket.TextMessage, message)
+		if err != nil {
+			fmt.Printf("Error writing to WebSocket for client %s: %v\n", c.ID, err)
+			return
 		}
 	}
 }
