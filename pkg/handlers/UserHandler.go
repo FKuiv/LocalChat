@@ -3,63 +3,131 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strings"
 
 	"github.com/FKuiv/LocalChat/pkg/controller"
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
-	gonanoid "github.com/matoous/go-nanoid/v2"
+	"github.com/gorilla/mux"
 )
 
 type userHandler struct {
-	controller.Controllers
+	UserController controller.UserController
 }
 
-func NewUserHandler(controllers controller.Controllers) *userHandler {
+func NewUserHandler(controller controller.UserController) *userHandler {
 	return &userHandler{
-		Controllers: controllers,
+		UserController: controller,
+	}
+}
+
+func (handler *userHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := handler.UserController.Service.GetAllUsers()
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("There was an error getting users: %s", err), http.StatusInternalServerError)
+		return
 	}
 
+	json.NewEncoder(w).Encode(users)
 }
-func (h *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+
+func (handler *userHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId, idOk := vars["id"]
+
+	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
+		return
+	}
+
+	user, err := handler.UserController.Service.GetUserById(userId)
+
+	if err != nil {
+		http.Error(w, "Error getting user", http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(user)
+}
+
+func (handler *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var userInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userInfo)
 	if utils.DecodingErr(err, "/user", w) {
 		return
 	}
 
-	if userInfo.Username == "" || userInfo.Password == "" {
-		http.Error(w, "Username or password not provided", http.StatusBadRequest)
-		return
-	}
-
-	passwordHash, err := utils.HashPassword(userInfo.Password)
+	newUser, err := handler.UserController.Service.CreateUser(userInfo)
 
 	if err != nil {
-		log.Println("Error hashing the password", err)
-		http.Error(w, "Problem hashing the password", http.StatusInternalServerError)
-	}
-
-	userId, userIdErr := gonanoid.New()
-
-	if utils.IDCreationErr(userIdErr, w) {
-		return
-	}
-
-	newUser := &models.User{ID: userId, Username: userInfo.Username, Password: passwordHash}
-	result := db.DB.Create(newUser)
-
-	// It is a hacky solution but GORM doesn't have an error type to check the unique key constraint so I am checking the substring in the error
-	if result.Error != nil && strings.Contains(result.Error.Error(), "(SQLSTATE 23505)") {
-		http.Error(w, fmt.Sprintf("Username %s is already taken", newUser.Username), http.StatusBadRequest)
-		return
-	}
-
-	if utils.CreationErr(result.Error, w) {
-		return
+		http.Error(w, fmt.Sprintf("Error creating user: %s", err), http.StatusInternalServerError)
 	}
 
 	json.NewEncoder(w).Encode(newUser)
+}
+
+func (handler *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	userId := r.Header.Get("UserId")
+
+	err := handler.UserController.Service.DeleteUser(userId)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error deleting user: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("User deleted successfully"))
+}
+
+func (handler *userHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var userInfo models.UserRequest
+	err := json.NewDecoder(r.Body).Decode(&userInfo)
+	if utils.DecodingErr(err, "/login", w) {
+		return
+	}
+
+	session, err := handler.UserController.Service.CreateSession(userInfo)
+
+	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Wrong password") {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusUnauthorized)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error creating session: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(session)
+}
+
+func (handler *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	var newUserInfo models.UserRequest
+	err := json.NewDecoder(r.Body).Decode(&newUserInfo)
+	if utils.DecodingErr(err, "/user", w) {
+		return
+	}
+
+	vars := mux.Vars(r)
+	userId, idOk := vars["id"]
+
+	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
+		return
+	}
+
+	currentUser, err := handler.UserController.Service.UpdateUser(newUserInfo, userId)
+
+	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Username already exists") {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error updating user: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(currentUser)
 }
