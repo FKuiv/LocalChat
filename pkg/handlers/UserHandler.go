@@ -62,6 +62,7 @@ func (handler *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error creating user: %s", err), http.StatusInternalServerError)
+		return
 	}
 
 	json.NewEncoder(w).Encode(newUser)

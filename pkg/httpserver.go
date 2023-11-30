@@ -45,11 +45,11 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/user_delete", handlers.UserHandler.DeleteUser).Methods(http.MethodDelete)
 
 	// Group
-	muxRouter.HandleFunc("/group", dbHandler.CreateGroup).Methods(http.MethodPost)
-	muxRouter.HandleFunc("/groups", dbHandler.GetAllGroups).Methods(http.MethodGet)
-	muxRouter.HandleFunc("/group/{id}", dbHandler.GetGroupById).Methods(http.MethodGet)
-	muxRouter.HandleFunc("/group/{id}", dbHandler.UpdateGroup).Methods(http.MethodPatch)
-	muxRouter.HandleFunc("/group/{id}", dbHandler.DeleteGroup).Methods(http.MethodDelete)
+	muxRouter.HandleFunc("/group", handlers.GroupHandler.CreateGroup).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/groups", handlers.GroupHandler.GetAllGroups).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.GetGroupById).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.UpdateGroup).Methods(http.MethodPatch)
+	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.DeleteGroup).Methods(http.MethodDelete)
 
 	// Message
 	muxRouter.HandleFunc("/message", dbHandler.CreateMessage).Methods(http.MethodPost)

@@ -11,9 +11,6 @@ import (
 func (db DBHandler) GetAllGroups(w http.ResponseWriter, r *http.Request) {
 	var groups []models.Group
 
-	// A way to also return users
-	// result := db.DB.Model(&models.Group{}).Preload("Messages").Find(&groups)
-
 	result := db.DB.Find(&groups)
 
 	if result.Error != nil {
