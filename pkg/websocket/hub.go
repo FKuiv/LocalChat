@@ -35,14 +35,14 @@ func (h *Hub) Run() {
 			h.mutex.Lock()
 			h.clients[client.ID] = client
 			h.mutex.Unlock()
-			log.Printf("User %s registered. Total users: %d", client.ID, len(h.clients))
+			log.Printf("User %s registered. Total users: %d", client.Username, len(h.clients))
 
 		case client := <-h.unregister:
 			h.mutex.Lock()
 			delete(h.clients, client.ID)
 			close(client.send)
 			h.mutex.Unlock()
-			log.Printf("User %s unregistered. Total users: %d", client.ID, len(h.clients))
+			log.Printf("User %s unregistered. Total users: %d", client.Username, len(h.clients))
 
 		case message := <-h.broadcast:
 			h.mutex.Lock()

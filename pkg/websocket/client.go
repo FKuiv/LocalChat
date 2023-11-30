@@ -4,19 +4,19 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/gorilla/websocket"
 )
 
 // Representation of the connection to the end user
 type Client struct {
+	models.User
 	socket *websocket.Conn
 	hub    *Hub
-	ID     string
-	// Channel for sending and receving messages from other clients
 	send   chan []byte
-	groups []*WsGroup
 }
 
+// This specific user is sending a message
 func (c *Client) read() {
 	defer func() {
 		c.hub.unregister <- c
@@ -31,11 +31,12 @@ func (c *Client) read() {
 			return
 		}
 
-		fmt.Println("Reading message:", message, "with user:", c.ID)
+		fmt.Println("Reading message:", []byte(message), "with user:", c.Username)
 		c.hub.broadcast <- message
 	}
 }
 
+// A new message is broadcasted to every user
 func (c *Client) write() {
 	defer c.socket.Close()
 
@@ -47,7 +48,7 @@ func (c *Client) write() {
 				return
 			}
 
-			fmt.Println("This message:", message, "for user:", c.ID)
+			fmt.Println("This message:", []byte(message), "for user:", c.Username)
 			err := c.socket.WriteMessage(websocket.TextMessage, message)
 			if err != nil {
 				fmt.Printf("Error writing to WebSocket for client %s: %v\n", c.ID, err)

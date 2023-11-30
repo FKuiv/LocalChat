@@ -33,7 +33,7 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 
 	// Endpoints
-	muxRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { websocket.WsHandler(hub, w, r) })
+	muxRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { websocket.WsHandler(hub, controllers, w, r) })
 
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
 
