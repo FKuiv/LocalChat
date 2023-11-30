@@ -22,10 +22,5 @@ type MessageRequest struct {
 }
 
 type UpdateMessage struct {
-	ID      string `json:"id"`
 	Content string `json:"content"`
-}
-
-type DeleteMessage struct {
-	ID string `json:"id"`
 }

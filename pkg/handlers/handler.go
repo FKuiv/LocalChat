@@ -5,13 +5,15 @@ import (
 )
 
 type Handlers struct {
-	UserHandler  *userHandler
-	GroupHandler *groupHandler
+	UserHandler    *userHandler
+	GroupHandler   *groupHandler
+	MessageHandler *messageHandler
 }
 
 func InitHandlers(cont *controller.Controllers) *Handlers {
 	return &Handlers{
-		UserHandler:  NewUserHandler(*cont.UserController),
-		GroupHandler: NewGroupHandler(*cont.GroupController),
+		UserHandler:    NewUserHandler(*cont.UserController),
+		GroupHandler:   NewGroupHandler(*cont.GroupController),
+		MessageHandler: NewMessageHandler(*cont.MessageController),
 	}
 }
