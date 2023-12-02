@@ -13,3 +13,8 @@ Docker compose file will setup the DB for you. Just run `docker compose up -d` f
 ## Environment variables
 
 Check the `.env.example` file for creating a .env
+
+## Errors I encountered
+
+When building Go docker image I got an error that said 'terminal prompts disabled'.
+To tackle it I used this command: `export GOPRIVATE=github.com/FKuiv/*`
