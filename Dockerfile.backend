@@ -1,0 +1,19 @@
+FROM golang:1.21.4
+
+WORKDIR /localchat
+
+COPY go.mod .
+COPY go.sum .
+COPY main.go .
+RUN go mod download
+# RUN go get golang.org/x/net
+RUN go mod tidy
+
+COPY ./pkg/**/* .
+
+# RUN go mod download golang.org/x/net
+RUN go build -o /localchat
+
+EXPOSE 8000
+
+CMD ["/localchat"]
