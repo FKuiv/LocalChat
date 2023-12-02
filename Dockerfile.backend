@@ -1,15 +1,18 @@
 FROM golang:1.21.4
 
-WORKDIR /localchat
+RUN mkdir /app
+WORKDIR /app
 
+ENV GO111MODULE=on 
+ENV GOPRIVATE=github.com/FKuiv/LocalChat
+
+COPY .env .
 COPY go.mod .
 COPY go.sum .
 COPY main.go .
-RUN export GOPRIVATE=github.com/FKuiv/*
-RUN go mod download
-RUN go mod tidy
+COPY pkg/ ./pkg
 
-COPY ./pkg/**/* .
+RUN go mod tidy
 
 RUN go build -o /localchat
 

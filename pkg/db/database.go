@@ -17,7 +17,7 @@ type Database struct {
 func Init() *Database {
 	enverr := godotenv.Load()
 	if enverr != nil {
-		fmt.Println("Error loading the env file")
+		fmt.Println("Error loading the env file:", enverr)
 	}
 
 	db_user := os.Getenv("POSTGRES_USER")
