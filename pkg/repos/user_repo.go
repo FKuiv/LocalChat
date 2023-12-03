@@ -165,6 +165,24 @@ func (repo *UserRepo) CreateSession(userInfo models.UserRequest) (*models.Sessio
 	return newSession, nil
 }
 
+func (repo *UserRepo) DeleteSession(sessionId string, userId string) error {
+	var session models.Session
+	result := repo.db.Where("id = ?", sessionId).First(&session)
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if session.UserID != userId {
+		return &utils.CustomError{Message: "Forbidden"}
+	}
+
+	if err := repo.db.Delete(&session).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (repo *UserRepo) UpdateUser(newUserInfo models.UserRequest, userId string) (*models.User, error) {
 
 	var currentUser models.User

@@ -47,7 +47,7 @@ func (handler *userHandler) GetUserById(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, "Error getting user", http.StatusInternalServerError)
 		return
 	}
-
+	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(user)
 }
 
@@ -102,6 +102,26 @@ func (handler *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(session)
+}
+
+func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
+	sessionId := r.Header.Get("Session")
+	userId := r.Header.Get("UserId")
+
+	err := handler.UserController.Service.DeleteSession(sessionId, userId)
+
+	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Forbidden") {
+		http.Error(w, "User does not own this session", http.StatusForbidden)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Failed to delete session: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Session deleted successfully"))
 }
 
 func (handler *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {

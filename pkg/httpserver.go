@@ -1,7 +1,6 @@
 package pkg
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -29,13 +28,14 @@ func StartHTTPServer() {
 	muxRouter := mux.NewRouter()
 
 	muxRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Simple Go server for LocalChat")
+		w.WriteHeader(http.StatusOK)
 	}).Methods(http.MethodGet)
 
 	// Endpoints
 	muxRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { websocket.WsHandler(hub, controllers, w, r) })
 
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/logout", handlers.UserHandler.Logout).Methods(http.MethodGet)
 
 	// User
 	muxRouter.HandleFunc("/user", handlers.UserHandler.CreateUser).Methods(http.MethodPost)

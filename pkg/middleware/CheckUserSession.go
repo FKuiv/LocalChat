@@ -20,10 +20,16 @@ func CheckUserSession(next http.Handler, db *gorm.DB) http.Handler {
 
 		var session models.Session
 		userId := r.Header.Get("UserId")
-		result := db.First(&session, "user_id = ?", userId)
+		sessionId := r.Header.Get("Session")
+		result := db.First(&session, "id = ?", sessionId)
 
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			http.Error(w, fmt.Sprintf("User with ID: %s does not have a session", userId), http.StatusUnauthorized)
+			return
+		}
+
+		if session.UserID != userId {
+			http.Error(w, "User ID and session ID do not match", http.StatusForbidden)
 			return
 		}
 

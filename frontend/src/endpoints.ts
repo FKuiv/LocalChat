@@ -1,10 +1,12 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:8000";
+export const baseUrl = "http://localhost:8000";
 
 export enum UserEndpoints {
   base = `${baseUrl}/user`,
   getAll = `${baseUrl}/users`,
+  login = `${baseUrl}/login`,
+  logout = `${baseUrl}/logout`,
 }
 
 export enum GroupEndpoints {
@@ -19,4 +21,8 @@ export enum MessageEndpoints {
 
 export const api = axios.create({
   baseURL: baseUrl,
+  headers: {
+    UserId: localStorage.getItem("UserId"),
+    Session: localStorage.getItem("Session"),
+  },
 });

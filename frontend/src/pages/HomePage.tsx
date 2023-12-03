@@ -1,11 +1,25 @@
 import { FC } from "react";
-import { AppShell, Burger } from "@mantine/core";
+import { AppShell, Burger, Button } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import Navbar from "@/components/navigation/Navbar";
 import Logo from "@/components/ui/Logo";
+import { UserEndpoints, api } from "@/endpoints";
+import UsersCarousel from "@/components/home/UsersCarousel";
 
 const HomePage: FC = () => {
   const [opened, { toggle }] = useDisclosure();
+
+  const handleLogout = () => {
+    api
+      .get(UserEndpoints.logout)
+      .then((res) => {
+        console.log("logout res", res);
+        window.location.reload();
+      })
+      .catch((err) => {
+        console.log("logout err", err);
+      });
+  };
 
   return (
     <AppShell
@@ -15,6 +29,8 @@ const HomePage: FC = () => {
       <AppShell.Header>
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         <Logo />
+        <UsersCarousel />
+        <Button onClick={handleLogout}>Logout</Button>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
