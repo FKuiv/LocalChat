@@ -21,8 +21,5 @@ export enum MessageEndpoints {
 
 export const api = axios.create({
   baseURL: baseUrl,
-  headers: {
-    UserId: localStorage.getItem("UserId"),
-    Session: localStorage.getItem("Session"),
-  },
+  withCredentials: true,
 });

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -19,16 +20,21 @@ func CheckUserSession(next http.Handler, db *gorm.DB) http.Handler {
 		}
 
 		var session models.Session
-		userId := r.Header.Get("UserId")
-		sessionId := r.Header.Get("Session")
-		result := db.First(&session, "id = ?", sessionId)
 
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			http.Error(w, fmt.Sprintf("User with ID: %s does not have a session", userId), http.StatusUnauthorized)
+		cookies, err := utils.GetCookies(r)
+		if err != nil {
+			http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
 			return
 		}
 
-		if session.UserID != userId {
+		result := db.First(&session, "id = ?", cookies.Session.Value)
+
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			http.Error(w, fmt.Sprintf("User with ID: %s does not have a session", cookies.User.Value), http.StatusUnauthorized)
+			return
+		}
+
+		if session.UserID != cookies.User.Value {
 			http.Error(w, "User ID and session ID do not match", http.StatusForbidden)
 			return
 		}

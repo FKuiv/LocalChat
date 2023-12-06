@@ -11,7 +11,7 @@ import { MantineProvider } from "@mantine/core";
 // });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <MantineProvider defaultColorScheme="auto">
+  <MantineProvider defaultColorScheme="dark">
     <React.StrictMode>
       <App />
     </React.StrictMode>

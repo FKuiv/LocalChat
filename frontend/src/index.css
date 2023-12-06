@@ -17,3 +17,13 @@ html {
   justify-content: center;
   /* align-items: center; */
 }
+.carousel {
+  width: 90%;
+  display: inline-block;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

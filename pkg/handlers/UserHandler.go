@@ -59,6 +59,12 @@ func (handler *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newUser, err := handler.UserController.Service.CreateUser(userInfo)
+	errString := fmt.Sprintf("%s", err)
+
+	if err != nil && strings.Contains(errString, "already taken") {
+		http.Error(w, errString, http.StatusConflict)
+		return
+	}
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error creating user: %s", err), http.StatusInternalServerError)
@@ -69,9 +75,13 @@ func (handler *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	userId := r.Header.Get("UserId")
+	userCookie, cookieErr := utils.GetUserCookie(r)
+	if cookieErr != nil {
+		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+		return
+	}
 
-	err := handler.UserController.Service.DeleteUser(userId)
+	err := handler.UserController.Service.DeleteUser(userCookie.Value)
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error deleting user: %s", err), http.StatusInternalServerError)
@@ -101,14 +111,23 @@ func (handler *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(session)
+	// 604800 is 7 days in seconds. Using MaxAge because Safari prefers it. Just in case setting expires as well
+	sessionCookie := http.Cookie{Name: "Session", Value: session.ID, Domain: "localhost", Path: "/", Expires: session.ExpiresAt, MaxAge: 604800, HttpOnly: true}
+	http.SetCookie(w, &sessionCookie)
+
+	userCookie := http.Cookie{Name: "UserId", Value: session.UserID, Domain: "localhost", Path: "/", Expires: session.ExpiresAt, MaxAge: 604800, HttpOnly: false}
+	http.SetCookie(w, &userCookie)
 }
 
 func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	sessionId := r.Header.Get("Session")
-	userId := r.Header.Get("UserId")
+	cookies, cookiesErr := utils.GetCookies(r)
 
-	err := handler.UserController.Service.DeleteSession(sessionId, userId)
+	if cookiesErr != nil {
+		http.Error(w, fmt.Sprintf("%s", cookiesErr), http.StatusBadRequest)
+		return
+	}
+
+	err := handler.UserController.Service.DeleteSession(cookies.Session.Value, cookies.User.Value)
 
 	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Forbidden") {
 		http.Error(w, "User does not own this session", http.StatusForbidden)
@@ -119,6 +138,13 @@ func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("Failed to delete session: %s", err), http.StatusInternalServerError)
 		return
 	}
+
+	// Deleting cookies
+	sessionCookie := http.Cookie{Name: "Session", Value: "", Domain: "localhost", Path: "/", MaxAge: -1, HttpOnly: true}
+	http.SetCookie(w, &sessionCookie)
+
+	userCookie := http.Cookie{Name: "UserId", Value: "", Domain: "localhost", Path: "/", MaxAge: -1, HttpOnly: false}
+	http.SetCookie(w, &userCookie)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Session deleted successfully"))

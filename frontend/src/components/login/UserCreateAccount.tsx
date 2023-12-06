@@ -13,11 +13,6 @@ const UserCreateAccount: FC = () => {
             .post(UserEndpoints.login, values)
             .then((loginRes) => {
               if (loginRes.status == 200) {
-                localStorage.setItem("UserId", loginRes.data["user_id"]);
-                localStorage.setItem("Session", loginRes.data["id"]);
-                api.defaults.headers.common["Session"] = loginRes.data["id"];
-                api.defaults.headers.common["UserId"] =
-                  loginRes.data["user_id"];
                 window.location.reload();
               }
             })

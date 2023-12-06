@@ -1,3 +1,2 @@
 .env
-db/
-postgre_db/
+data/

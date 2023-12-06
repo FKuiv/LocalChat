@@ -144,10 +144,16 @@ func (repo *UserRepo) DeleteUser(userId string) error {
 func (repo *UserRepo) CreateSession(userInfo models.UserRequest) (*models.Session, error) {
 
 	var currentUser models.User
-	repo.db.Find(&currentUser, "username = ?", userInfo.Username)
+	repo.db.First(&currentUser, "username = ?", userInfo.Username)
 
 	if !utils.CheckPasswordHash(userInfo.Password, currentUser.Password) {
 		return nil, &utils.CustomError{Message: "Wrong password"}
+	}
+
+	var existingSession models.Session
+	repo.db.First(&existingSession, "user_id = ?", currentUser.ID)
+	if existingSession != (models.Session{}) {
+		return &existingSession, nil
 	}
 
 	sessionId, idErr := gonanoid.New()

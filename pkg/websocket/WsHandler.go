@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/FKuiv/LocalChat/pkg/controller"
+	"github.com/FKuiv/LocalChat/pkg/utils"
 	"github.com/gorilla/websocket"
 )
 
@@ -15,8 +16,12 @@ var wsConnUpgrader = websocket.Upgrader{
 }
 
 func WsHandler(hub *Hub, controllers *controller.Controllers, w http.ResponseWriter, r *http.Request) {
-	userId := r.Header.Get("UserId")
-	user, userErr := controllers.UserController.Service.GetUserById(userId)
+	userCookie, cookieErr := utils.GetUserCookie(r)
+	if cookieErr != nil {
+		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+		return
+	}
+	user, userErr := controllers.UserController.Service.GetUserById(userCookie.Value)
 
 	if userErr != nil {
 		http.Error(w, fmt.Sprintf("Error getting user: %s", userErr), http.StatusInternalServerError)

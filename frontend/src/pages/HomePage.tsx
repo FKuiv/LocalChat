@@ -26,7 +26,7 @@ const HomePage: FC = () => {
       header={{ height: 60 }}
       navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
     >
-      <AppShell.Header>
+      <AppShell.Header className="header">
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         <Logo />
         <UsersCarousel />

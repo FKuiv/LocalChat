@@ -15,15 +15,10 @@ export default function App() {
         }
       })
       .catch((err) => {
-        if (err.response.status == 401 || err.response.status == 403) {
-          if (
-            localStorage.getItem("Session") != null ||
-            localStorage.getItem("UserId") != null
-          ) {
-            localStorage.removeItem("UserId");
-            localStorage.removeItem("Session");
-            window.location.reload();
-          }
+        if (err.response == undefined) {
+          console.log("SERVER is DOWN");
+        } else if (err.response.status == 400) {
+          console.log("Not authenticated");
         } else {
           console.log("err from /", err);
         }

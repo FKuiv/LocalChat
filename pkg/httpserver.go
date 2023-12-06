@@ -30,7 +30,6 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}).Methods(http.MethodGet)
-
 	// Endpoints
 	muxRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { websocket.WsHandler(hub, controllers, w, r) })
 
@@ -58,7 +57,13 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.UpdateMessage).Methods(http.MethodPatch)
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.DeleteMessage).Methods(http.MethodDelete)
 
-	handler := cors.Default().Handler(muxRouter)
+	corsInstance := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173", "http://localhost:8080"},
+		AllowCredentials: true,
+		// Enable Debugging for testing, consider disabling in production
+		Debug: true,
+	})
+	handler := corsInstance.Handler(muxRouter)
 
 	log.Println("starting http server at localhost:8000")
 	http.ListenAndServe(":8000", middleware.CheckUserSession(middleware.SetHeaders(handler), dbconn.GetDB()))

@@ -8,12 +8,7 @@ const UserLogin: FC = () => {
     api
       .post(UserEndpoints.login, values)
       .then((res) => {
-        console.log("logni res", res);
         if (res.status == 200) {
-          localStorage.setItem("UserId", res.data["user_id"]);
-          localStorage.setItem("Session", res.data["id"]);
-          api.defaults.headers.common["Session"] = res.data["id"];
-          api.defaults.headers.common["UserId"] = res.data["user_id"];
           window.location.reload();
         }
       })

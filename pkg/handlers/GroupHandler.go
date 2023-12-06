@@ -82,9 +82,13 @@ func (handler *groupHandler) DeleteGroup(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	userId := r.Header.Get("UserId")
+	userCookie, cookieErr := utils.GetUserCookie(r)
+	if cookieErr != nil {
+		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+		return
+	}
 
-	err := handler.GroupController.Service.DeleteGroup(groupId, userId)
+	err := handler.GroupController.Service.DeleteGroup(groupId, userCookie.Value)
 
 	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "User needs to be admin to delete this group") {
 		http.Error(w, fmt.Sprintf("%s", err), http.StatusForbidden)
