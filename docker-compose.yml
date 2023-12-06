@@ -4,6 +4,12 @@ networks:
   localchat:
     driver: bridge
 
+volumes:
+  postgre:
+    driver: local
+  minio:
+    driver: local
+
 services:
   db:
     image: postgres:16
@@ -11,21 +17,24 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./data/postgre:/var/lib/postgresql/data
+      - postgre:/var/lib/postgresql/data
     env_file:
       - .env
     restart: unless-stopped
 
   minio:
     image: "bitnami/minio:latest"
+    container_name: localchat-minio
     ports:
       - 9000:9000
+      - 9001:9001 # The admin console
     env_file:
       - .env
     volumes:
-      - ./data/minio:/bitnami/minio/data
+      - minio:/bitnami/minio/data
     networks:
       - localchat
+    restart: unless-stopped
 
   # backend:
   #   build:
@@ -38,3 +47,4 @@ services:
   #   restart: unless-stopped
   #   depends_on:
   #     - db
+  #     - minio

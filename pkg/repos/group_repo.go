@@ -8,16 +8,19 @@ import (
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
 	gonanoid "github.com/matoous/go-nanoid/v2"
+	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
 
 type GroupRepo struct {
-	db *gorm.DB
+	db    *gorm.DB
+	minio *minio.Client
 }
 
-func NewGroupRepo(db *gorm.DB) *GroupRepo {
+func NewGroupRepo(db *gorm.DB, minio *minio.Client) *GroupRepo {
 	return &GroupRepo{
-		db: db,
+		db:    db,
+		minio: minio,
 	}
 }
 

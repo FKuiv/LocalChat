@@ -17,8 +17,9 @@ import (
 
 func StartHTTPServer() {
 	dbconn := db.Init()
+	minioConn := db.InitMinio()
 
-	repositories := repos.InitRepositories(dbconn.GetDB())
+	repositories := repos.InitRepositories(dbconn.GetDB(), minioConn.GetMinio())
 	controllers := controller.InitControllers(repositories)
 	handlers := handlers.InitHandlers(controllers)
 

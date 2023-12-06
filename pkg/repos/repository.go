@@ -1,6 +1,7 @@
 package repos
 
 import (
+	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
 
@@ -12,10 +13,10 @@ type Repositories struct {
 }
 
 // InitRepositories should be called in main.go
-func InitRepositories(db *gorm.DB) *Repositories {
-	userRepo := NewUserRepo(db)
-	groupRepo := NewGroupRepo(db)
-	messageRepo := NewMessageRepo(db)
+func InitRepositories(db *gorm.DB, minio *minio.Client) *Repositories {
+	userRepo := NewUserRepo(db, minio)
+	groupRepo := NewGroupRepo(db, minio)
+	messageRepo := NewMessageRepo(db, minio)
 	return &Repositories{
 		UserRepo:    userRepo,
 		GroupRepo:   groupRepo,
