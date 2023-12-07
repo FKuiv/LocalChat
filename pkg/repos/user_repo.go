@@ -261,9 +261,9 @@ func (repo *UserRepo) SaveProfilePic(picture multipart.File, pictureInfo *multip
 func (repo *UserRepo) GetProfilePic(userId string) (string, error) {
 	// Set request parameters for content-disposition.
 	reqParams := make(url.Values)
-	urlExpiration := time.Second * 60 * 3
+	urlExpiration := time.Second * 60
 
-	// Generates a presigned url which expires in a 2 minutes.
+	// Generates a presigned url which expires in a 1 minutes.
 	presignedURL, err := repo.minio.PresignedGetObject(context.Background(), "localchat", utils.UserProfilePicName(userId), urlExpiration, reqParams)
 	if err != nil {
 		return "", err
