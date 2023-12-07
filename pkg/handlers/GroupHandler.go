@@ -83,8 +83,7 @@ func (handler *groupHandler) DeleteGroup(w http.ResponseWriter, r *http.Request)
 	}
 
 	userCookie, cookieErr := utils.GetUserCookie(r)
-	if cookieErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 

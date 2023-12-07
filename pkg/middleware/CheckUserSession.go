@@ -22,8 +22,7 @@ func CheckUserSession(next http.Handler, db *gorm.DB) http.Handler {
 		var session models.Session
 
 		cookies, err := utils.GetCookies(r)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
+		if utils.CookieError(err, w) {
 			return
 		}
 

@@ -59,8 +59,7 @@ func (handler *messageHandler) CreateMessage(w http.ResponseWriter, r *http.Requ
 	}
 
 	userCookie, cookieErr := utils.GetUserCookie(r)
-	if cookieErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 
@@ -81,8 +80,7 @@ func (handler *messageHandler) DeleteMessage(w http.ResponseWriter, r *http.Requ
 	}
 
 	userCookie, cookieErr := utils.GetUserCookie(r)
-	if cookieErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 

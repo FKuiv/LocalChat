@@ -65,3 +65,12 @@ func ItemFetchError(err error, item string, w http.ResponseWriter) bool {
 
 	return false
 }
+
+func CookieError(err error, w http.ResponseWriter) bool {
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
+		return true
+	}
+
+	return false
+}

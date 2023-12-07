@@ -76,8 +76,7 @@ func (handler *userHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (handler *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userCookie, cookieErr := utils.GetUserCookie(r)
-	if cookieErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 
@@ -122,8 +121,7 @@ func (handler *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	cookies, cookiesErr := utils.GetCookies(r)
 
-	if cookiesErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookiesErr), http.StatusBadRequest)
+	if utils.CookieError(cookiesErr, w) {
 		return
 	}
 
@@ -156,15 +154,12 @@ func (handler *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if utils.DecodingErr(err, "/user", w) {
 		return
 	}
-
-	vars := mux.Vars(r)
-	userId, idOk := vars["id"]
-
-	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
+	userCookie, cookieErr := utils.GetUserCookie(r)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 
-	currentUser, err := handler.UserController.Service.UpdateUser(newUserInfo, userId)
+	currentUser, err := handler.UserController.Service.UpdateUser(newUserInfo, userCookie.Value)
 
 	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Username already exists") {
 		http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
@@ -185,9 +180,7 @@ func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Requ
 		return
 	}
 	userCookie, cookieErr := utils.GetUserCookie(r)
-
-	if cookieErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 
@@ -211,9 +204,7 @@ func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Requ
 
 func (handler *userHandler) GetProfilePic(w http.ResponseWriter, r *http.Request) {
 	userCookie, cookieErr := utils.GetUserCookie(r)
-
-	if cookieErr != nil {
-		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+	if utils.CookieError(cookieErr, w) {
 		return
 	}
 
