@@ -178,3 +178,51 @@ func (handler *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(currentUser)
 }
+
+func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseMultipartForm(5 * utils.MB); err != nil {
+		http.Error(w, fmt.Sprintf("error parsing request: %s", err), http.StatusBadRequest)
+		return
+	}
+	userCookie, cookieErr := utils.GetUserCookie(r)
+
+	if cookieErr != nil {
+		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+		return
+	}
+
+	// Limit upload size
+	r.Body = http.MaxBytesReader(w, r.Body, 5*utils.MB) // 5 Mb
+
+	file, multipartFileHeader, err := r.FormFile("picture")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error parsing request: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	if err := handler.UserController.Service.SaveProfilePic(file, multipartFileHeader, userCookie.Value); err != nil {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("File uploaded successfully"))
+}
+
+func (handler *userHandler) GetProfilePic(w http.ResponseWriter, r *http.Request) {
+	userCookie, cookieErr := utils.GetUserCookie(r)
+
+	if cookieErr != nil {
+		http.Error(w, fmt.Sprintf("%s", cookieErr), http.StatusBadRequest)
+		return
+	}
+
+	picUrl, err := handler.UserController.Service.GetProfilePic(userCookie.Value)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(picUrl))
+}

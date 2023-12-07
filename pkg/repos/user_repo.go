@@ -1,9 +1,13 @@
 package repos
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
+	"mime/multipart"
+	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -227,4 +231,43 @@ func (repo *UserRepo) UpdateUser(newUserInfo models.UserRequest, userId string) 
 
 	repo.db.Save(&currentUser)
 	return &currentUser, nil
+}
+
+func (repo *UserRepo) SaveProfilePic(picture multipart.File, pictureInfo *multipart.FileHeader, userId string) error {
+	// Create a buffer to store the header of the file in
+	pictureHeader := make([]byte, 512)
+
+	// Copy the headers into the FileHeader buffer
+	if _, err := picture.Read(pictureHeader); err != nil {
+		return err
+	}
+
+	// set position back to start.
+	if _, err := picture.Seek(0, 0); err != nil {
+		return err
+	}
+
+	userTags := map[string]string{"user_id": userId}
+
+	_, err := repo.minio.PutObject(context.Background(), "localchat", utils.UserProfilePicName(userId), picture, pictureInfo.Size, minio.PutObjectOptions{ContentType: http.DetectContentType(pictureHeader), UserMetadata: userTags})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *UserRepo) GetProfilePic(userId string) (string, error) {
+	// Set request parameters for content-disposition.
+	reqParams := make(url.Values)
+	urlExpiration := time.Second * 60 * 3
+
+	// Generates a presigned url which expires in a 2 minutes.
+	presignedURL, err := repo.minio.PresignedGetObject(context.Background(), "localchat", utils.UserProfilePicName(userId), urlExpiration, reqParams)
+	if err != nil {
+		return "", err
+	}
+
+	return presignedURL.String(), nil
 }

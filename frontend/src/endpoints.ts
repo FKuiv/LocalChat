@@ -7,6 +7,7 @@ export enum UserEndpoints {
   getAll = `${baseUrl}/users`,
   login = `${baseUrl}/login`,
   logout = `${baseUrl}/logout`,
+  profilepic = `${baseUrl}/profilepic`,
 }
 
 export enum GroupEndpoints {

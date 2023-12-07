@@ -37,6 +37,8 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/logout", handlers.UserHandler.Logout).Methods(http.MethodGet)
 
+	muxRouter.HandleFunc("/profilepic", handlers.UserHandler.UploadProfilePic).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/profilepic", handlers.UserHandler.GetProfilePic).Methods(http.MethodGet)
 	// User
 	muxRouter.HandleFunc("/user", handlers.UserHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", handlers.UserHandler.GetAllUsers).Methods(http.MethodGet)

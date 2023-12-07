@@ -30,7 +30,7 @@ func InitMinio() *Minio {
 	})
 
 	if err != nil {
-		fmt.Println("Error starting mnigo", err)
+		fmt.Println("Error starting minio", err)
 	}
 
 	return &Minio{minio: minioClient}
