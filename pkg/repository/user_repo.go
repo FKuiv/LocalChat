@@ -1,4 +1,4 @@
-package repos
+package repository
 
 import (
 	"context"
@@ -13,6 +13,7 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
+	"github.com/FKuiv/LocalChat/pkg/websocket"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
@@ -21,13 +22,20 @@ import (
 type UserRepo struct {
 	db    *gorm.DB
 	minio *minio.Client
+	hub   *websocket.Hub
 }
 
-func NewUserRepo(db *gorm.DB, minio *minio.Client) *UserRepo {
+func NewUserRepo(db *gorm.DB, minio *minio.Client, hub *websocket.Hub) *UserRepo {
 	return &UserRepo{
 		db:    db,
 		minio: minio,
+		hub:   hub,
 	}
+}
+
+// Return websocket hub to use in handlers. I know it's a little dumb but I can't come up with something better atm.
+func (repo *UserRepo) GetWsHub() *websocket.Hub {
+	return repo.hub
 }
 
 func (repo *UserRepo) GetAllUsers() ([]models.User, error) {
@@ -158,8 +166,8 @@ func (repo *UserRepo) CreateSession(userInfo models.UserRequest) (*models.Sessio
 	}
 
 	var existingSession models.Session
-	repo.db.First(&existingSession, "user_id = ?", currentUser.ID)
-	if existingSession != (models.Session{}) {
+	existingSessionResult := repo.db.First(&existingSession, "user_id = ?", currentUser.ID)
+	if existingSessionResult.Error == nil {
 		return &existingSession, nil
 	}
 

@@ -1,6 +1,7 @@
-package repos
+package repository
 
 import (
+	"github.com/FKuiv/LocalChat/pkg/websocket"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
@@ -13,10 +14,10 @@ type Repositories struct {
 }
 
 // InitRepositories should be called in main.go
-func InitRepositories(db *gorm.DB, minio *minio.Client) *Repositories {
-	userRepo := NewUserRepo(db, minio)
-	groupRepo := NewGroupRepo(db, minio)
-	messageRepo := NewMessageRepo(db, minio)
+func InitRepositories(db *gorm.DB, minio *minio.Client, hub *websocket.Hub) *Repositories {
+	userRepo := NewUserRepo(db, minio, hub)
+	groupRepo := NewGroupRepo(db, minio, hub)
+	messageRepo := NewMessageRepo(db, minio, hub)
 	return &Repositories{
 		UserRepo:    userRepo,
 		GroupRepo:   groupRepo,

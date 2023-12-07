@@ -2,7 +2,7 @@ package controller
 
 import (
 	"github.com/FKuiv/LocalChat/pkg/models"
-	repos "github.com/FKuiv/LocalChat/pkg/repos"
+	repos "github.com/FKuiv/LocalChat/pkg/repository"
 )
 
 type group_repository interface {

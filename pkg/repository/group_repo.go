@@ -1,4 +1,4 @@
-package repos
+package repository
 
 import (
 	"errors"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
+	"github.com/FKuiv/LocalChat/pkg/websocket"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
@@ -15,12 +16,14 @@ import (
 type GroupRepo struct {
 	db    *gorm.DB
 	minio *minio.Client
+	hub   *websocket.Hub
 }
 
-func NewGroupRepo(db *gorm.DB, minio *minio.Client) *GroupRepo {
+func NewGroupRepo(db *gorm.DB, minio *minio.Client, hub *websocket.Hub) *GroupRepo {
 	return &GroupRepo{
 		db:    db,
 		minio: minio,
+		hub:   hub,
 	}
 }
 

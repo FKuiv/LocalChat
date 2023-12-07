@@ -3,14 +3,22 @@ package websocket
 import (
 	"log"
 	"sync"
+
+	"github.com/FKuiv/LocalChat/pkg/models"
 )
 
 type Hub struct {
-	clients    map[string]*Client
-	register   chan *Client
-	unregister chan *Client
-	broadcast  chan []byte
+	Clients    map[string]*Client
+	Groups     map[string]*WsGroup
+	Register   chan *Client
+	Unregister chan *Client
+	Broadcast  chan WsMessage
 	mutex      sync.Mutex
+}
+
+type WsGroup struct {
+	models.Group
+	clients map[string]*Client
 }
 
 type WsMessage struct {
@@ -21,37 +29,49 @@ type WsMessage struct {
 
 func NewHub() *Hub {
 	return &Hub{
-		clients:    make(map[string]*Client),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		broadcast:  make(chan []byte),
+		Clients:    make(map[string]*Client),
+		Groups:     make(map[string]*WsGroup),
+		Register:   make(chan *Client),
+		Unregister: make(chan *Client),
+		Broadcast:  make(chan WsMessage),
 	}
 }
 
 func (h *Hub) Run() {
 	for {
 		select {
-		case client := <-h.register:
+		case client := <-h.Register:
 			h.mutex.Lock()
-			h.clients[client.ID] = client
-			h.mutex.Unlock()
-			log.Printf("User %s registered. Total users: %d", client.Username, len(h.clients))
 
-		case client := <-h.unregister:
-			h.mutex.Lock()
-			delete(h.clients, client.ID)
-			close(client.send)
-			h.mutex.Unlock()
-			log.Printf("User %s unregistered. Total users: %d", client.Username, len(h.clients))
+			h.Clients[client.ID] = client
 
-		case message := <-h.broadcast:
+			// for groupId := range client.wsgroups {
+			// 	group, exists := h.groups[groupId]
+			// 	if !exists {
+			// 		group = &WsGroup{Group: , clients: make(map[string]*Client)}
+			// 		h.groups[groupID] = group
+			// 	}
+			// 	group.clients[client.ID] = client
+			// }
+
+			h.mutex.Unlock()
+			log.Printf("User %s registered. Total users: %d", client.Username, len(h.Clients))
+
+		case client := <-h.Unregister:
 			h.mutex.Lock()
-			for _, client := range h.clients {
+			delete(h.Clients, client.ID)
+			close(client.Send)
+			h.mutex.Unlock()
+			log.Printf("User %s unregistered. Total users: %d", client.Username, len(h.Clients))
+
+		case message := <-h.Broadcast:
+			h.mutex.Lock()
+			for _, client := range h.Clients {
 				select {
-				case client.send <- message:
+				case client.Send <- message:
 				default:
-					close(client.send)
-					delete(h.clients, client.ID)
+					close(client.Send)
+					delete(h.Clients, client.ID)
 				}
 			}
 			h.mutex.Unlock()

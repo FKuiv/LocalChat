@@ -1,7 +1,7 @@
 package controller
 
 import (
-	repos "github.com/FKuiv/LocalChat/pkg/repos"
+	repos "github.com/FKuiv/LocalChat/pkg/repository"
 )
 
 // Controllers contains all the controllers

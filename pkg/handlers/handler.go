@@ -8,6 +8,7 @@ type Handlers struct {
 	UserHandler    *userHandler
 	GroupHandler   *groupHandler
 	MessageHandler *messageHandler
+	WsHandler      *wsHandler
 }
 
 func InitHandlers(cont *controller.Controllers) *Handlers {
@@ -15,5 +16,6 @@ func InitHandlers(cont *controller.Controllers) *Handlers {
 		UserHandler:    NewUserHandler(*cont.UserController),
 		GroupHandler:   NewGroupHandler(*cont.GroupController),
 		MessageHandler: NewMessageHandler(*cont.MessageController),
+		WsHandler:      NewWsHandler(*cont),
 	}
 }

@@ -11,20 +11,19 @@ import (
 	"github.com/FKuiv/LocalChat/pkg/db"
 	"github.com/FKuiv/LocalChat/pkg/handlers"
 	"github.com/FKuiv/LocalChat/pkg/middleware"
-	"github.com/FKuiv/LocalChat/pkg/repos"
+	"github.com/FKuiv/LocalChat/pkg/repository"
 	"github.com/FKuiv/LocalChat/pkg/websocket"
 )
 
 func StartHTTPServer() {
 	dbconn := db.Init()
 	minioConn := db.InitMinio()
-
-	repositories := repos.InitRepositories(dbconn.GetDB(), minioConn.GetMinio())
-	controllers := controller.InitControllers(repositories)
-	handlers := handlers.InitHandlers(controllers)
-
 	hub := websocket.NewHub()
 	go hub.Run()
+
+	repositories := repository.InitRepositories(dbconn.GetDB(), minioConn.GetMinio(), hub)
+	controllers := controller.InitControllers(repositories)
+	handlers := handlers.InitHandlers(controllers)
 
 	muxRouter := mux.NewRouter()
 
@@ -32,7 +31,7 @@ func StartHTTPServer() {
 		w.WriteHeader(http.StatusOK)
 	}).Methods(http.MethodGet)
 	// Endpoints
-	muxRouter.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) { websocket.WsHandler(hub, controllers, w, r) })
+	muxRouter.HandleFunc("/ws", handlers.WsHandler.Handle)
 
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/logout", handlers.UserHandler.Logout).Methods(http.MethodGet)
