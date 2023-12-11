@@ -32,6 +32,7 @@ func StartHTTPServer() {
 	}).Methods(http.MethodGet)
 	// Endpoints
 	muxRouter.HandleFunc("/ws", handlers.WsHandler.Handle)
+	muxRouter.HandleFunc("/ws/refresh", handlers.WsHandler.RefreshWs).Methods(http.MethodPost)
 
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/logout", handlers.UserHandler.Logout).Methods(http.MethodGet)

@@ -179,3 +179,44 @@ func (repo *GroupRepo) UpdateGroup(newGroupInfo models.GroupRequest, groupId str
 
 	return &currentGroup, nil
 }
+
+func (repo *GroupRepo) GetGroupUserIds(groupId string) ([]string, error) {
+	var users []models.User
+	result := repo.db.Joins("JOIN user_groups ON users.id = user_groups.user_id").
+		Where("user_groups.group_id = ?", groupId).
+		Find(&users)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	var userIds []string
+	for _, user := range users {
+		userIds = append(userIds, user.ID)
+	}
+
+	return userIds, nil
+}
+
+func (repo *GroupRepo) GetAllUserGroups(userId string) ([]models.Group, error) {
+	var groups []models.Group
+	if err := repo.db.Preload("Users").Joins("JOIN user_groups ON groups.id = user_groups.group_id").
+		Where("user_groups.user_id = ?", userId).Find(&groups).Error; err != nil {
+		return nil, err
+	}
+	return groups, nil
+}
+
+func (repo *GroupRepo) GetAllUserGroupIds(userId string) ([]string, error) {
+	groups, err := repo.GetAllUserGroups(userId)
+	if err != nil {
+		return nil, err
+	}
+
+	var groupIds []string
+	for _, group := range groups {
+		groupIds = append(groupIds, group.ID)
+	}
+
+	return groupIds, nil
+}

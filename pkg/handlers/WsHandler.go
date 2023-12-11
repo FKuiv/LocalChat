@@ -48,10 +48,19 @@ func (handler *wsHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+	groupIds, groupsErr := handler.GroupController.Service.GetAllUserGroupIds(user.ID)
+	if groupsErr != nil {
+		http.Error(w, fmt.Sprintf("%s", groupsErr), http.StatusInternalServerError)
+		return
+	}
 
-	client := &websocket.Client{Hub: handler.UserController.Service.GetWsHub(), Socket: conn, Send: make(chan websocket.WsMessage), User: *user}
+	client := &websocket.Client{GroupIds: groupIds, Hub: handler.UserController.Service.GetWsHub(), Socket: conn, Send: make(chan websocket.WsMessage), User: *user}
 	client.Hub.Register <- client
 
 	go client.Write()
 	go client.Read()
+}
+
+func (handler *wsHandler) RefreshWs(w http.ResponseWriter, r *http.Request) {
+
 }

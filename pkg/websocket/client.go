@@ -13,7 +13,7 @@ type Client struct {
 	Socket   *websocket.Conn
 	Hub      *Hub
 	Send     chan WsMessage
-	Wsgroups map[string]*WsGroup
+	GroupIds []string
 }
 
 // This specific user is sending a message
