@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -62,5 +63,16 @@ func (handler *wsHandler) Handle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *wsHandler) RefreshWs(w http.ResponseWriter, r *http.Request) {
+	var message websocket.RefreshMessage
+	err := json.NewDecoder(r.Body).Decode(&message)
+	if utils.DecodingErr(err, "/ws/refresh", w) {
+		return
+	}
 
+	hub := handler.UserController.Service.GetWsHub()
+
+	hub.Refresh <- message
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Websocket refreshed"))
 }
