@@ -51,15 +51,15 @@ services:
   #   depends_on:
   #     - minio
 
-  # backend:
-  #   build:
-  #     dockerfile: ./Dockerfile.backend
-  #   container_name: localchat-backend
-  #   ports:
-  #     - 8000:8000
-  #   env_file:
-  #     - .env
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - db
-  #     - minio
+  backend:
+    build:
+      dockerfile: ./Dockerfile.backend
+    container_name: localchat-backend
+    ports:
+      - 8000:8000
+    env_file:
+      - .env
+    restart: unless-stopped
+    depends_on:
+      - db
+      - minio

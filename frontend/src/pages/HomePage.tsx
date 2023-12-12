@@ -1,15 +1,16 @@
-import { FC, useState } from "react";
-import { AppShell, Burger, Button, FileInput, Image } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { FC } from "react";
+import { AppShell, Burger, Button, useMantineTheme } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import Navbar from "@/components/navigation/Navbar";
 import Logo from "@/components/ui/Logo";
 import { UserEndpoints, api } from "@/endpoints";
-import UsersCarousel from "@/components/home/UsersCarousel";
+import SettingsPage from "./SettingsPage";
+import Chats from "@/components/home/Chats";
 
 const HomePage: FC = () => {
   const [opened, { toggle }] = useDisclosure();
-  const [profilePic, setProfilePic] = useState<File | null>(null);
-  const [picUrl, setpicUrl] = useState("");
+  const theme = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const handleLogout = () => {
     api
@@ -23,33 +24,6 @@ const HomePage: FC = () => {
       });
   };
 
-  const handleUpload = () => {
-    const formData = new FormData();
-    formData.append("picture", profilePic as Blob);
-    api
-      .post(UserEndpoints.profilepic, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-      .then((res) => {
-        console.log("res from file uplaod", res);
-      })
-      .catch((err) => {
-        console.log("err from file uploa", err);
-      });
-  };
-
-  const handlePic = () => {
-    api
-      .get(UserEndpoints.profilepic)
-      .then((res) => {
-        console.log("Res geting pic", res);
-        setpicUrl(res.data);
-      })
-      .catch((err) => {
-        console.log("err gettign pic", err);
-      });
-  };
-
   return (
     <AppShell
       header={{ height: 60 }}
@@ -58,25 +32,12 @@ const HomePage: FC = () => {
       <AppShell.Header className="header">
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         <Logo />
-        <UsersCarousel />
         <Button onClick={handleLogout}>Logout</Button>
       </AppShell.Header>
       <AppShell.Navbar p="md">
-        <Navbar />
+        {isMobile ? <SettingsPage /> : <Navbar />}
       </AppShell.Navbar>
-      walkthrough
-      <AppShell.Main>
-        <FileInput
-          label="Profile pic"
-          description="Upload your profile picture"
-          placeholder="my_profile_picture.png"
-          value={profilePic}
-          onChange={setProfilePic}
-        />
-        <Button onClick={handleUpload}>Upload</Button>
-        <Button onClick={handlePic}>Get Profile pic</Button>
-        <Image radius="md" src={picUrl} />
-      </AppShell.Main>
+      <AppShell.Main>{isMobile && <Chats />}</AppShell.Main>
     </AppShell>
   );
 };

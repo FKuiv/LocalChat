@@ -4,15 +4,14 @@ import { Carousel } from "@mantine/carousel";
 const UsersCarousel: FC = () => {
   return (
     <Carousel
-      className="carousel"
+      className="carousel border"
       slideSize="70%"
       height={200}
       slideGap="md"
       controlSize={40}
       loop
     >
-      <div>THIGON</div>
-      <div>THIGON</div>
+      <Carousel.Slide>Thing</Carousel.Slide>
     </Carousel>
   );
 };
