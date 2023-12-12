@@ -1,7 +1,7 @@
 package websocket
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/gorilla/websocket"
@@ -28,12 +28,17 @@ func (c *Client) Read() {
 		var message WsMessage
 		err := c.Socket.ReadJSON(&message)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			return
 		}
 
-		fmt.Println("Reading message:", message, "with user:", c.Username)
+		log.Println("Reading message:", message, "with user:", c.Username)
 		c.Hub.Broadcast <- message
+
+		_, dbErr := c.Hub.controllers.MessageController.Service.CreateMessage(models.MessageRequest{GroupID: message.GroupID, Content: message.Content}, c.ID)
+		if dbErr != nil {
+			log.Println("Error saving message:", dbErr)
+		}
 	}
 }
 
@@ -44,7 +49,7 @@ func (c *Client) Write() {
 	for message := range c.Send {
 		err := c.Socket.WriteJSON(&message)
 		if err != nil {
-			fmt.Printf("Error writing to WebSocket for client %s: %v\n", c.ID, err)
+			log.Printf("Error writing to WebSocket for client %s: %v\n", c.ID, err)
 			return
 		}
 	}

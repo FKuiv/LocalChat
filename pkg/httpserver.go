@@ -18,12 +18,13 @@ import (
 func StartHTTPServer() {
 	dbconn := db.Init()
 	minioConn := db.InitMinio()
-	hub := websocket.NewHub()
-	go hub.Run()
 
-	repositories := repository.InitRepositories(dbconn.GetDB(), minioConn.GetMinio(), hub)
+	repositories := repository.InitRepositories(dbconn.GetDB(), minioConn.GetMinio())
 	controllers := controller.InitControllers(repositories)
 	handlers := handlers.InitHandlers(controllers)
+
+	hub := websocket.NewHub(controllers)
+	go hub.Run()
 
 	muxRouter := mux.NewRouter()
 
@@ -31,8 +32,8 @@ func StartHTTPServer() {
 		w.WriteHeader(http.StatusOK)
 	}).Methods(http.MethodGet)
 	// Endpoints
-	muxRouter.HandleFunc("/ws", handlers.WsHandler.Handle)
-	muxRouter.HandleFunc("/ws/refresh", handlers.WsHandler.RefreshWs).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/ws", hub.Handle)
+	muxRouter.HandleFunc("/ws/refresh", hub.RefreshWs).Methods(http.MethodPost)
 
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/logout", handlers.UserHandler.Logout).Methods(http.MethodGet)

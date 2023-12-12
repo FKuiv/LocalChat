@@ -3,16 +3,19 @@ package websocket
 import (
 	"log"
 	"sync"
+
+	"github.com/FKuiv/LocalChat/pkg/controller"
 )
 
 type Hub struct {
-	Clients    map[string]*Client
-	Groups     map[string]*WsGroup
-	Register   chan *Client
-	Unregister chan *Client
-	Broadcast  chan WsMessage
-	Refresh    chan RefreshMessage
-	mutex      sync.Mutex
+	Clients     map[string]*Client
+	Groups      map[string]*WsGroup
+	Register    chan *Client
+	Unregister  chan *Client
+	Broadcast   chan WsMessage
+	Refresh     chan RefreshMessage
+	controllers *controller.Controllers
+	mutex       sync.Mutex
 }
 
 type WsGroup struct {
@@ -31,14 +34,15 @@ type RefreshMessage struct {
 	ClientsToUpdate []string `json:"clients_to_update"`
 }
 
-func NewHub() *Hub {
+func NewHub(controllers *controller.Controllers) *Hub {
 	return &Hub{
-		Clients:    make(map[string]*Client),
-		Groups:     make(map[string]*WsGroup),
-		Register:   make(chan *Client),
-		Unregister: make(chan *Client),
-		Broadcast:  make(chan WsMessage),
-		Refresh:    make(chan RefreshMessage),
+		Clients:     make(map[string]*Client),
+		Groups:      make(map[string]*WsGroup),
+		Register:    make(chan *Client),
+		Unregister:  make(chan *Client),
+		Broadcast:   make(chan WsMessage),
+		Refresh:     make(chan RefreshMessage),
+		controllers: controllers,
 	}
 }
 

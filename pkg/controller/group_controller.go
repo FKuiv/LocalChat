@@ -11,6 +11,7 @@ type group_repository interface {
 	CreateGroup(group models.GroupRequest) (*models.Group, error)
 	DeleteGroup(groupId string, userId string) error
 	UpdateGroup(group models.GroupRequest, groupId string) (*models.Group, error)
+	GetGroupUserIds(groupId string) ([]string, error)
 	GetAllUserGroups(userId string) ([]models.Group, error)
 	GetAllUserGroupIds(userId string) ([]string, error)
 }

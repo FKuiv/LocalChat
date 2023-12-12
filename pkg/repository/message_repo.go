@@ -7,7 +7,6 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
-	"github.com/FKuiv/LocalChat/pkg/websocket"
 	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
@@ -16,14 +15,12 @@ import (
 type MessageRepo struct {
 	db    *gorm.DB
 	minio *minio.Client
-	hub   *websocket.Hub
 }
 
-func NewMessageRepo(db *gorm.DB, minio *minio.Client, hub *websocket.Hub) *MessageRepo {
+func NewMessageRepo(db *gorm.DB, minio *minio.Client) *MessageRepo {
 	return &MessageRepo{
 		db:    db,
 		minio: minio,
-		hub:   hub,
 	}
 }
 
@@ -67,7 +64,7 @@ func (repo *MessageRepo) CreateMessage(message models.MessageRequest, userId str
 	result := repo.db.Create(newMessage)
 
 	if result.Error != nil {
-		log.Println("error saving message")
+		log.Println("error saving message:", result.Error)
 		return nil, result.Error
 	}
 

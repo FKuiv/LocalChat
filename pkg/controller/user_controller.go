@@ -5,7 +5,6 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	repos "github.com/FKuiv/LocalChat/pkg/repository"
-	"github.com/FKuiv/LocalChat/pkg/websocket"
 )
 
 type repository interface {
@@ -18,7 +17,6 @@ type repository interface {
 	UpdateUser(user models.UserRequest, userId string) (*models.User, error)
 	SaveProfilePic(picture multipart.File, pictureInfo *multipart.FileHeader, userId string) error
 	GetProfilePic(userId string) (string, error)
-	GetWsHub() *websocket.Hub
 }
 
 // UserController contains the service, which contains database-related logic, as an injectable dependency, allowing us to decouple business logic from db logic.
