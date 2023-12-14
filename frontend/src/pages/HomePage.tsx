@@ -32,12 +32,14 @@ const HomePage: FC = () => {
       <AppShell.Header className="header">
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
         <Logo />
-        <Button onClick={handleLogout}>Logout</Button>
       </AppShell.Header>
       <AppShell.Navbar p="md">
         {isMobile ? <SettingsPage /> : <Navbar />}
       </AppShell.Navbar>
-      <AppShell.Main>{isMobile && <Chats />}</AppShell.Main>
+      <AppShell.Main>
+        {isMobile && <Chats />}
+        <Button onClick={handleLogout}>Logout</Button>
+      </AppShell.Main>
     </AppShell>
   );
 };

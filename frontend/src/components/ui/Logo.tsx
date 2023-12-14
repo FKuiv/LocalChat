@@ -1,13 +1,13 @@
-import { Image, Title } from "@mantine/core";
+import { Flex, Image, Title } from "@mantine/core";
 import { FC } from "react";
 import logo from "../../media/logo.png";
 
 const Logo: FC = () => {
   return (
-    <>
-      <Image maw={50} src={logo} />
+    <Flex m="auto">
+      <Image h={50} w="auto" fit="contain" src={logo} />
       <Title>Localchat</Title>
-    </>
+    </Flex>
   );
 };
 
