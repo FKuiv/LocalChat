@@ -12,6 +12,7 @@ type repository interface {
 	GetUserById(userId string) (*models.User, error)
 	CreateUser(user models.UserRequest) (*models.User, error)
 	DeleteUser(userId string) error
+	GetSessionById(sessionId string, userId string) (*models.Session, error)
 	CreateSession(user models.UserRequest) (*models.Session, error)
 	DeleteSession(sessionId string, userId string) error
 	UpdateUser(user models.UserRequest, userId string) (*models.User, error)

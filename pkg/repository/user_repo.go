@@ -148,6 +148,21 @@ func (repo *UserRepo) DeleteUser(userId string) error {
 	return nil
 }
 
+func (repo *UserRepo) GetSessionById(sessionId string, userId string) (*models.Session, error) {
+	var session models.Session
+	result := repo.db.First(&session, "id = ?", sessionId)
+
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, &utils.CustomError{Message: fmt.Sprintf("User with ID: %s does not have a session", userId)}
+	}
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &session, nil
+}
+
 func (repo *UserRepo) CreateSession(userInfo models.UserRequest) (*models.Session, error) {
 
 	var currentUser models.User

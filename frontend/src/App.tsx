@@ -17,7 +17,7 @@ export default function App() {
       .catch((err) => {
         if (err.response == undefined) {
           console.log("SERVER is DOWN");
-        } else if (err.response.status == 400) {
+        } else if (err.response.status == 401 || err.response.status == 400) {
           console.log("Not authenticated");
         } else {
           console.log("err from /", err);

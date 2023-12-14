@@ -1,11 +1,13 @@
-import { Title } from "@mantine/core";
+import { Image, Title } from "@mantine/core";
 import { FC } from "react";
+import logo from "../../media/logo.png";
 
 const Logo: FC = () => {
   return (
-    <Title order={1} bg="grape" display="inline" py="1rem" px="2rem">
-      Localchat
-    </Title>
+    <>
+      <Image maw={50} src={logo} />
+      <Title>Localchat</Title>
+    </>
   );
 };
 
