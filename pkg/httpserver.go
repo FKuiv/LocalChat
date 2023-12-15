@@ -44,21 +44,21 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/user", handlers.UserHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", handlers.UserHandler.GetAllUsers).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", handlers.UserHandler.GetUserById).Methods(http.MethodGet)
-	muxRouter.HandleFunc("/user", handlers.UserHandler.UpdateUser).Methods(http.MethodPatch)
-	muxRouter.HandleFunc("/user_delete", handlers.UserHandler.DeleteUser).Methods(http.MethodDelete)
+	muxRouter.HandleFunc("/user", handlers.UserHandler.UpdateUser).Methods(http.MethodPut)
+	muxRouter.HandleFunc("/user/delete", handlers.UserHandler.DeleteUser).Methods(http.MethodDelete)
 
 	// Group
 	muxRouter.HandleFunc("/group", handlers.GroupHandler.CreateGroup).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/groups", handlers.GroupHandler.GetAllGroups).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.GetGroupById).Methods(http.MethodGet)
-	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.UpdateGroup).Methods(http.MethodPatch)
+	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.UpdateGroup).Methods(http.MethodPut)
 	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.DeleteGroup).Methods(http.MethodDelete)
 
 	// Message
 	muxRouter.HandleFunc("/message", handlers.MessageHandler.CreateMessage).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/messages", handlers.MessageHandler.GetAllMessages).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.GetMessageById).Methods(http.MethodGet)
-	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.UpdateMessage).Methods(http.MethodPatch)
+	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.UpdateMessage).Methods(http.MethodPut)
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.DeleteMessage).Methods(http.MethodDelete)
 
 	corsInstance := cors.New(cors.Options{

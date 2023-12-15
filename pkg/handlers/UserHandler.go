@@ -91,6 +91,32 @@ func (handler *userHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("User deleted successfully"))
 }
 
+func (handler *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
+	var newUserInfo models.UserRequest
+	err := json.NewDecoder(r.Body).Decode(&newUserInfo)
+	if utils.DecodingErr(err, "/user", w) {
+		return
+	}
+	userCookie, cookieErr := utils.GetUserCookie(r)
+	if utils.CookieError(cookieErr, w) {
+		return
+	}
+
+	currentUser, err := handler.UserController.Service.UpdateUser(newUserInfo, userCookie.Value)
+
+	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Username already exists") {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
+		return
+	}
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error updating user: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(currentUser)
+}
+
 func (handler *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var userInfo models.UserRequest
 	err := json.NewDecoder(r.Body).Decode(&userInfo)
@@ -146,32 +172,6 @@ func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Session deleted successfully"))
-}
-
-func (handler *userHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	var newUserInfo models.UserRequest
-	err := json.NewDecoder(r.Body).Decode(&newUserInfo)
-	if utils.DecodingErr(err, "/user", w) {
-		return
-	}
-	userCookie, cookieErr := utils.GetUserCookie(r)
-	if utils.CookieError(cookieErr, w) {
-		return
-	}
-
-	currentUser, err := handler.UserController.Service.UpdateUser(newUserInfo, userCookie.Value)
-
-	if err != nil && strings.Contains(fmt.Sprintf("%s", err), "Username already exists") {
-		http.Error(w, fmt.Sprintf("%s", err), http.StatusBadRequest)
-		return
-	}
-
-	if err != nil {
-		http.Error(w, fmt.Sprintf("Error updating user: %s", err), http.StatusInternalServerError)
-		return
-	}
-
-	json.NewEncoder(w).Encode(currentUser)
 }
 
 func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Request) {

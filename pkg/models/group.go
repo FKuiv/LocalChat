@@ -17,14 +17,14 @@ type Group struct {
 	Users     []*User   `gorm:"many2many:user_groups;" json:"users"`
 	Messages  []Message `json:"messages"` // Every group can have a lot of messages
 	Admins    Admins    `gorm:"type:text" json:"admins"`
-	IsDm      bool      `json:"isdm" gorm:"not null"`
+	IsDm      bool      `json:"isDm" gorm:"not null"`
 }
 
 type GroupRequest struct {
 	Name    string   `json:"name"`
 	UserIDs []string `json:"user_ids"`
 	Admins  Admins   `json:"admins"`
-	IsDm    bool     `json:"isdm"`
+	IsDm    bool     `json:"isDm"`
 }
 
 type Admins []string

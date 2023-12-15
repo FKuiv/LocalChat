@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export const baseUrl = "http://localhost:8000";
 
 export enum UserEndpoints {
@@ -7,6 +5,7 @@ export enum UserEndpoints {
   getAll = `${baseUrl}/users`,
   login = `${baseUrl}/login`,
   logout = `${baseUrl}/logout`,
+  delete = `${baseUrl}/user/delete`,
   profilepic = `${baseUrl}/profilepic`,
 }
 
@@ -19,8 +18,3 @@ export enum MessageEndpoints {
   base = `${baseUrl}/message`,
   getAll = `${baseUrl}/messages`,
 }
-
-export const api = axios.create({
-  baseURL: baseUrl,
-  withCredentials: true,
-});
