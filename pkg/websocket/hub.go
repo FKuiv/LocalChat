@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/FKuiv/LocalChat/pkg/controller"
+	"github.com/FKuiv/LocalChat/pkg/models"
 )
 
 type Hub struct {
@@ -12,7 +13,7 @@ type Hub struct {
 	Groups      map[string]*WsGroup
 	Register    chan *Client
 	Unregister  chan *Client
-	Broadcast   chan WsMessage
+	Broadcast   chan models.MessageRequest
 	Refresh     chan RefreshMessage
 	controllers *controller.Controllers
 	mutex       sync.Mutex
@@ -21,12 +22,6 @@ type Hub struct {
 type WsGroup struct {
 	ID      string
 	Clients map[string]*Client
-}
-
-type WsMessage struct {
-	UserID  string `json:"user_id"`  // aka the Author of the message
-	GroupID string `json:"group_id"` // to filter the message into the right chat
-	Content string `json:"content"`
 }
 
 type RefreshMessage struct {
@@ -40,7 +35,7 @@ func NewHub(controllers *controller.Controllers) *Hub {
 		Groups:      make(map[string]*WsGroup),
 		Register:    make(chan *Client),
 		Unregister:  make(chan *Client),
-		Broadcast:   make(chan WsMessage),
+		Broadcast:   make(chan models.MessageRequest),
 		Refresh:     make(chan RefreshMessage),
 		controllers: controllers,
 	}

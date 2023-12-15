@@ -4,7 +4,7 @@ import { GroupEndpoints } from "./endpoints";
 
 export const createGroup = (groupData: GroupRequest) => {
   return api
-    .post(GroupEndpoints.base, groupData)
+    .post(GroupEndpoints.base(), groupData)
     .then((response) => response.data)
     .catch((error) => {
       console.error(`Error creating group:`, error);
@@ -14,7 +14,7 @@ export const createGroup = (groupData: GroupRequest) => {
 
 export const getAllGroups = () => {
   return api
-    .get(GroupEndpoints.getAll)
+    .get(GroupEndpoints.getAll())
     .then((response) => response.data)
     .catch((error) => {
       console.error(`Error getting all groups:`, error);
@@ -24,7 +24,7 @@ export const getAllGroups = () => {
 
 export const getGroupById = (id: string) => {
   return api
-    .get(`${GroupEndpoints.base}/${id}`)
+    .get(GroupEndpoints.byId(id))
     .then((response) => response.data)
     .catch((error) => {
       console.error(`Error getting group by id:`, error);
@@ -34,8 +34,8 @@ export const getGroupById = (id: string) => {
 
 export const updateGroup = (id: string, groupData: UpdateGroup) => {
   return api
-    .put(`${GroupEndpoints.base}/${id}`, groupData)
-    .then((response) => response.data)
+    .put(GroupEndpoints.byId(id), groupData)
+    .then((response) => response)
     .catch((error) => {
       console.error(`Error updating group:`, error);
       throw error;
@@ -44,8 +44,8 @@ export const updateGroup = (id: string, groupData: UpdateGroup) => {
 
 export const deleteGroup = (id: string) => {
   return api
-    .delete(`${GroupEndpoints.base}/${id}`)
-    .then((response) => response.data)
+    .delete(GroupEndpoints.byId(id))
+    .then((response) => response)
     .catch((error) => {
       console.error(`Error deleting group:`, error);
       throw error;

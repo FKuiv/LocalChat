@@ -3,9 +3,9 @@ import { AppShell, Burger, Button, useMantineTheme } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import Navbar from "@/components/navigation/Navbar";
 import Logo from "@/components/ui/Logo";
-import { UserEndpoints, api } from "@/endpoints";
 import SettingsPage from "./SettingsPage";
 import Chats from "@/components/home/Chats";
+import { logoutUser } from "@/api/user";
 
 const HomePage: FC = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -13,15 +13,9 @@ const HomePage: FC = () => {
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   const handleLogout = () => {
-    api
-      .get(UserEndpoints.logout)
-      .then((res) => {
-        console.log("logout res", res);
-        window.location.reload();
-      })
-      .catch((err) => {
-        console.log("logout err", err);
-      });
+    logoutUser().then(() => {
+      window.location.reload();
+    });
   };
 
   return (

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
 	gorillaWs "github.com/gorilla/websocket"
 )
@@ -39,7 +40,7 @@ func (hub *Hub) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{GroupIds: groupIds, Hub: hub, Socket: conn, Send: make(chan WsMessage), User: *user}
+	client := &Client{GroupIds: groupIds, Hub: hub, Socket: conn, Send: make(chan models.MessageRequest), User: *user}
 	client.Hub.Register <- client
 
 	go client.Write()

@@ -1,20 +1,15 @@
 import { FC } from "react";
 import UserLoginCard from "../ui/UserLoginCard";
-import { Login } from "@/types/Login";
-import { UserEndpoints, api } from "@/endpoints";
+import { Login } from "@/types/user";
+import { loginUser } from "@/api/user";
 
 const UserLogin: FC = () => {
   const handleSubmit = (values: Login) => {
-    api
-      .post(UserEndpoints.login, values)
-      .then((res) => {
-        if (res.status == 200) {
-          window.location.reload();
-        }
-      })
-      .catch((err) => {
-        console.log("login err", err);
-      });
+    loginUser(values).then((res) => {
+      if (res.status == 200) {
+        window.location.reload();
+      }
+    });
   };
 
   return <UserLoginCard onSubmit={handleSubmit} buttonLabel="Login" />;

@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
-import { api, baseUrl } from "./endpoints";
+import { ping } from "./api";
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
-    api
-      .get(baseUrl)
+    ping()
       .then((res) => {
         if (res.status == 200) {
           setLoggedIn(true);

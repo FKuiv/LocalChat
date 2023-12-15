@@ -1,4 +1,4 @@
-import { Login, defaultLogin } from "@/types/Login";
+import { Login, defaultLogin } from "@/types/user";
 import { TextInput, Flex, Button, Group, Box } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
 import { FC } from "react";

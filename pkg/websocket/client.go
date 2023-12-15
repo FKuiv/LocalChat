@@ -12,7 +12,7 @@ type Client struct {
 	models.User
 	Socket   *websocket.Conn
 	Hub      *Hub
-	Send     chan WsMessage
+	Send     chan models.MessageRequest
 	GroupIds []string
 }
 
@@ -25,7 +25,7 @@ func (c *Client) Read() {
 
 	for {
 
-		var message WsMessage
+		var message models.MessageRequest
 		err := c.Socket.ReadJSON(&message)
 		if err != nil {
 			log.Println(err)
