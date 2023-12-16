@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import { ping } from "./api";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "./redux/store";
+import { setLoggedIn } from "./redux/userSlice";
 
 export default function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const loggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     ping()
       .then((res) => {
         if (res.status == 200) {
-          setLoggedIn(true);
+          dispatch(setLoggedIn(true));
         }
       })
       .catch((err) => {
