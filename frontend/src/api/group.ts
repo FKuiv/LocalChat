@@ -51,3 +51,13 @@ export const deleteGroup = (id: string) => {
       throw error;
     });
 };
+
+export const getAllUserGroups = () => {
+  return api
+    .get(GroupEndpoints.getAllUserGroups())
+    .then((response) => response)
+    .catch((error) => {
+      console.error("Error getting user groups:", error);
+      throw error;
+    });
+};

@@ -201,6 +201,12 @@ func (repo *GroupRepo) GetAllUserGroups(userId string) ([]models.Group, error) {
 		Where("user_groups.user_id = ?", userId).Find(&groups).Error; err != nil {
 		return nil, err
 	}
+
+	for i := range groups {
+		groups[i].Users = []*models.User{}
+		groups[i].Messages = []models.Message{}
+	}
+
 	return groups, nil
 }
 

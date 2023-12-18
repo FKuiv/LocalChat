@@ -4,8 +4,8 @@ import logo from "../../media/logo.png";
 
 const Logo: FC = () => {
   return (
-    <Flex m="auto">
-      <Image h={50} w="auto" fit="contain" src={logo} />
+    <Flex m="auto" align="center" justify="center">
+      <Image h={40} w="auto" fit="contain" src={logo} />
       <Title>Localchat</Title>
     </Flex>
   );

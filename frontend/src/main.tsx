@@ -8,6 +8,7 @@ import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 import { Provider } from "react-redux";
 import store from "./redux/store.ts";
+import { BrowserRouter } from "react-router-dom";
 
 // const theme = createTheme({
 // });
@@ -15,9 +16,11 @@ import store from "./redux/store.ts";
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
     <MantineProvider defaultColorScheme="dark">
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <BrowserRouter>
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      </BrowserRouter>
     </MantineProvider>
   </Provider>
 );

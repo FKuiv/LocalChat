@@ -13,6 +13,7 @@ export const UserEndpoints = {
 export const GroupEndpoints = {
   base: () => `${baseUrl}/group`,
   getAll: () => `${baseUrl}/groups`,
+  getAllUserGroups: () => `${baseUrl}/groups/user`,
   byId: (groupId: string) => `${baseUrl}/groups/${groupId}`,
 };
 

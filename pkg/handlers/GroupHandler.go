@@ -137,3 +137,20 @@ func (handler *groupHandler) UpdateGroup(w http.ResponseWriter, r *http.Request)
 
 	json.NewEncoder(w).Encode(currentGroup)
 }
+
+func (handler *groupHandler) GetAllUserGroups(w http.ResponseWriter, r *http.Request) {
+	userCookie, cookieErr := utils.GetUserCookie(r)
+
+	if utils.CookieError(cookieErr, w) {
+		return
+	}
+
+	userGroups, err := handler.GroupController.Service.GetAllUserGroups(userCookie.Value)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error fetching user groups: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(userGroups)
+}

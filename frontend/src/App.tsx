@@ -5,6 +5,8 @@ import { ping } from "./api";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/store";
 import { setLoggedIn } from "./redux/userSlice";
+import { Navigate, Route, Routes } from "react-router-dom";
+import Chat from "./components/home/Chat";
 
 export default function App() {
   const loggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
@@ -26,17 +28,20 @@ export default function App() {
           console.log("err from /", err);
         }
       });
-  }, []);
+  }, [dispatch]);
 
   return (
-    <div className="maxHeight">
-      {!loggedIn ? (
-        <LoginPage />
-      ) : (
-        <>
-          <HomePage />
-        </>
-      )}
-    </div>
+    <Routes>
+      <Route
+        path="/login"
+        element={!loggedIn ? <LoginPage /> : <Navigate to="/" replace />}
+      />
+      <Route
+        path="/"
+        element={loggedIn ? <HomePage /> : <Navigate to="/login" replace />}
+      />
+      <Route path="/chat/:chatId" element={<Chat />} />
+      <Route path="*" element={<div>404</div>} />
+    </Routes>
   );
 }
