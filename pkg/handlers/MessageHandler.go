@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/FKuiv/LocalChat/pkg/controller"
@@ -127,4 +128,30 @@ func (handler *messageHandler) UpdateMessage(w http.ResponseWriter, r *http.Requ
 	}
 
 	json.NewEncoder(w).Encode(updatedMessage)
+}
+
+func (handler *messageHandler) GetMessagesByGroup(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	groupId, idOk := vars["groupId"]
+	messageAmount, amountOk := vars["messageAmount"]
+
+	if utils.MuxVarsNotProvided(idOk, groupId, "Message ID", w) || utils.MuxVarsNotProvided(amountOk, messageAmount, "Message Amount", w) {
+		return
+	}
+
+	intMessageAmount, conversionErr := strconv.Atoi(messageAmount)
+
+	if conversionErr != nil {
+		http.Error(w, fmt.Sprintf("Error converting messageAmount to string: %s", conversionErr), http.StatusBadRequest)
+		return
+	}
+
+	messages, err := handler.MessageController.Service.GetMessagesByGroup(groupId, intMessageAmount)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error retrieving messages: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(messages)
 }

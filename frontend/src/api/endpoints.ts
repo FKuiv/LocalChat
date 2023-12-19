@@ -14,13 +14,15 @@ export const GroupEndpoints = {
   base: () => `${baseUrl}/group`,
   getAll: () => `${baseUrl}/groups`,
   getAllUserGroups: () => `${baseUrl}/groups/user`,
-  byId: (groupId: string) => `${baseUrl}/groups/${groupId}`,
+  byId: (groupId: string | undefined) => `${baseUrl}/group/${groupId}`,
 };
 
 export const MessageEndpoints = {
   base: () => `${baseUrl}/message`,
   getAll: () => `${baseUrl}/messages`,
   byId: (messageId: string) => `${baseUrl}/message/${messageId}`,
+  getByGroup: (groupId: string | undefined, messageAmount: number) =>
+    `${baseUrl}/message/${groupId}/${messageAmount}`,
 };
 
 export enum WebsocketEndpoints {

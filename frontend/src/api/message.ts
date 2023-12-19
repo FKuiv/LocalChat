@@ -51,3 +51,16 @@ export const deleteMessage = (id: string) => {
       throw error;
     });
 };
+
+export const getMessagesByGroup = (
+  groupId: string | undefined,
+  messageAmount: number
+) => {
+  return api
+    .get(MessageEndpoints.getByGroup(groupId, messageAmount))
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error(`Error getting messages by group:`, error);
+      throw error;
+    });
+};

@@ -25,7 +25,7 @@ export type User = {
   password: string;
   created_at: Date;
   updated_at: Date;
-  messages: boolean | Message[];
-  groups: boolean | Group[];
+  messages: Message[];
+  groups: Group[];
   session: Session;
 };

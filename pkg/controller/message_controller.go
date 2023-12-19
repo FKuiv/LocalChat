@@ -11,6 +11,7 @@ type message_repository interface {
 	CreateMessage(message models.MessageRequest, userId string) (*models.Message, error)
 	DeleteMessage(messageId string, userId string) error
 	UpdateMessage(newMessage models.UpdateMessage, messageId string) (*models.Message, error)
+	GetMessagesByGroup(groupId string, messageCount int) ([]models.Message, error)
 }
 
 type MessageController struct {

@@ -61,6 +61,7 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.GetMessageById).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.UpdateMessage).Methods(http.MethodPut)
 	muxRouter.HandleFunc("/message/{id}", handlers.MessageHandler.DeleteMessage).Methods(http.MethodDelete)
+	muxRouter.HandleFunc("/message/{groupId}/{messageAmount}", handlers.MessageHandler.GetMessagesByGroup).Methods(http.MethodGet)
 
 	corsInstance := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:5173", "http://localhost:8080"},

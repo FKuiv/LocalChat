@@ -19,8 +19,19 @@ export type Group = {
   name: string;
   created_at: Date;
   updated_at: Date;
-  users: boolean | User[];
-  messages: boolean | Message[];
+  users: User[];
+  messages: Message[];
   admins: string[];
   isDm: boolean;
+};
+
+export const defaultGroup: Group = {
+  id: "",
+  name: "",
+  created_at: new Date(),
+  updated_at: new Date(),
+  users: [],
+  messages: [],
+  admins: [],
+  isDm: false,
 };

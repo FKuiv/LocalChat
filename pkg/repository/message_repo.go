@@ -108,3 +108,15 @@ func (repo *MessageRepo) UpdateMessage(newMessageInfo models.UpdateMessage, mess
 	repo.db.Save(&currentMessage)
 	return currentMessage, nil
 }
+
+func (repo *MessageRepo) GetMessagesByGroup(groupId string, messageCount int) ([]models.Message, error) {
+	var messages []models.Message
+	result := repo.db.Limit(messageCount).Where("group_id = ?", groupId).Order("created_at DESC").Find(&messages)
+
+	if result.Error != nil {
+		log.Println("Error getting messages by group:", result.Error)
+		return nil, result.Error
+	}
+
+	return messages, nil
+}

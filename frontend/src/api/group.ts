@@ -22,7 +22,7 @@ export const getAllGroups = () => {
     });
 };
 
-export const getGroupById = (id: string) => {
+export const getGroupById = (id: string | undefined) => {
   return api
     .get(GroupEndpoints.byId(id))
     .then((response) => response.data)
