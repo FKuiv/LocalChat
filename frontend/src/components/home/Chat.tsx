@@ -3,11 +3,16 @@ import { useParams } from "react-router";
 import { ActionIcon, Flex, TextInput, Tooltip } from "@mantine/core";
 import { Group, defaultGroup } from "@/types/group";
 import { getGroupById } from "@/api/group";
-import { Message } from "@/types/message";
+import { Message, MessageRequest } from "@/types/message";
 import { getMessagesByGroup } from "@/api/message";
 import { IconArrowUp } from "@tabler/icons-react";
+import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 
-const Chat: FC = () => {
+type chatProps = {
+  sendJsonMessage: SendJsonMessage;
+};
+
+const Chat: FC<chatProps> = (props) => {
   const [group, setGroup] = useState<Group>(defaultGroup);
   const [messages, setMessages] = useState<Message[]>([]);
   const params = useParams();
@@ -28,7 +33,10 @@ const Chat: FC = () => {
         <h3>{group.name}</h3>
       </Flex>
       <ChatMessages group={group} messages={messages} />
-      <ChatInput />
+      <ChatInput
+        sendJsonMessage={props.sendJsonMessage}
+        groupId={params.chatId}
+      />
     </Flex>
   );
 };
@@ -52,12 +60,17 @@ const SingleChatMessage: FC<Message> = (message) => {
   return <Flex style={{ border: "1px solid blue" }}>{message.content}</Flex>;
 };
 
-const ChatInput: FC = () => {
+const ChatInput: FC<{
+  sendJsonMessage: SendJsonMessage;
+  groupId: string | undefined;
+}> = (props) => {
   const [newMessage, setNewMessage] = useState("");
 
   const handleClick = () => {
-    // TODO - send a new message via websocket
-    console.log(newMessage);
+    props.sendJsonMessage<MessageRequest>({
+      content: newMessage,
+      group_id: props.groupId,
+    });
   };
 
   return (

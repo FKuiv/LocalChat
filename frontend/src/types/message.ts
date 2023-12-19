@@ -1,5 +1,5 @@
 export type MessageRequest = {
-  group_id: string;
+  group_id: string | undefined;
   content: string;
 };
 

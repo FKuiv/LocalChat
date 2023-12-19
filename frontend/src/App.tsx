@@ -7,10 +7,23 @@ import { RootState } from "./redux/store";
 import { setLoggedIn } from "./redux/userSlice";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Chat from "./components/home/Chat";
+import useWebSocket from "react-use-websocket";
+import { WebsocketEndpoints } from "@/api/endpoints";
 
 export default function App() {
   const loggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
   const dispatch = useDispatch();
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
+    WebsocketEndpoints.base,
+    {
+      onOpen: () => console.log("ws opened"),
+      // Reconnect
+      shouldReconnect: (closeEvent) => {
+        console.log("The ws close event:", closeEvent);
+        return true;
+      },
+    }
+  );
 
   useEffect(() => {
     ping()
@@ -40,7 +53,10 @@ export default function App() {
         path="/"
         element={loggedIn ? <HomePage /> : <Navigate to="/login" replace />}
       />
-      <Route path="/chat/:chatId" element={<Chat />} />
+      <Route
+        path="/chat/:groupId"
+        element={<Chat sendJsonMessage={sendJsonMessage} />}
+      />
       <Route path="*" element={<div>404</div>} />
     </Routes>
   );
