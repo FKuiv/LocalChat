@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { AppShell, Burger, useMantineTheme } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import Navbar from "@/components/navigation/Navbar";
@@ -6,7 +5,7 @@ import Logo from "@/components/ui/Logo";
 import SettingsPage from "./SettingsPage";
 import ChatGroups from "@/components/home/ChatGroups";
 
-const HomePage: FC = () => {
+const HomePage = () => {
   const [opened, { toggle }] = useDisclosure();
   const theme = useMantineTheme();
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);

@@ -1,7 +1,6 @@
-import { FC } from "react";
 import { Carousel } from "@mantine/carousel";
 
-const UsersCarousel: FC = () => {
+const UsersCarousel = () => {
   return (
     <Carousel
       className="carousel border"

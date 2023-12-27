@@ -2,9 +2,8 @@ import UserCreateAccount from "@/components/login/UserCreateAccount";
 import UserLogin from "@/components/login/UserLogin";
 import Logo from "@/components/ui/Logo";
 import { Flex, Card, Center, Tabs } from "@mantine/core";
-import { FC } from "react";
 
-const LoginPage: FC = () => {
+const LoginPage = () => {
   return (
     <Center className="maxHeight">
       <Flex

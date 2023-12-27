@@ -1,8 +1,7 @@
-import { FC } from "react";
 import { logoutUser } from "@/api/user";
 import { Button } from "@mantine/core";
 
-const SettingsPage: FC = () => {
+const SettingsPage = () => {
   const handleLogout = () => {
     logoutUser().then(() => {
       window.location.reload();

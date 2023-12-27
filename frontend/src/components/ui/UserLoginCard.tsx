@@ -1,14 +1,13 @@
 import { Login, defaultLogin } from "@/types/user";
 import { TextInput, Flex, Button, Group, Box } from "@mantine/core";
 import { hasLength, useForm } from "@mantine/form";
-import { FC } from "react";
 
 type userLoginCardType = {
   onSubmit: ({ username, password }: Login) => void;
   buttonLabel: string;
 };
 
-const UserLoginCard: FC<userLoginCardType> = (props) => {
+const UserLoginCard = (props: userLoginCardType) => {
   const { onSubmit, buttonLabel } = props;
 
   const form = useForm({

@@ -1,9 +1,8 @@
-import { FC } from "react";
 import UserLoginCard from "../ui/UserLoginCard";
 import { Login } from "@/types/user";
 import { loginUser } from "@/api/user";
 
-const UserLogin: FC = () => {
+const UserLogin = () => {
   const handleSubmit = (values: Login) => {
     loginUser(values).then((res) => {
       if (res.status == 200) {

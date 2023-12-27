@@ -1,24 +1,28 @@
-import { FC, useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { ActionIcon, Container, Flex, TextInput, Tooltip } from "@mantine/core";
+import { useContext, useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router";
+import {
+  ActionIcon,
+  Container,
+  Flex,
+  TextInput,
+  Title,
+  Tooltip,
+} from "@mantine/core";
 import { Group, defaultGroup } from "@/types/group";
 import { getGroupById } from "@/api/group";
 import { Message, MessageRequest } from "@/types/message";
 import { getMessagesByGroup } from "@/api/message";
-import { IconArrowUp } from "@tabler/icons-react";
+import { IconArrowLeft, IconArrowUp } from "@tabler/icons-react";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { ReadyState } from "react-use-websocket";
+import { WebSocketContext } from "@/WebSocketContext";
 
-type chatProps = {
-  sendJsonMessage: SendJsonMessage;
-  readyState: ReadyState;
-  websocketMessageHistory: MessageRequest[];
-};
-
-const Chat: FC<chatProps> = (props) => {
+const Chat = () => {
   const [group, setGroup] = useState<Group>(defaultGroup);
   const [messages, setMessages] = useState<Message[]>([]);
   const params = useParams();
+  const navigate = useNavigate();
+  const websocket = useContext(WebSocketContext);
 
   useEffect(() => {
     getGroupById(params.groupId).then((res: Group) => {
@@ -32,33 +36,37 @@ const Chat: FC<chatProps> = (props) => {
 
   return (
     <Flex direction="column" h="100%">
-      <Flex style={{ borderBottom: "1px solid white", flexBasis: "10%" }}>
-        <h3>{group.name}</h3>
+      <Flex
+        align="center"
+        justify="space-evenly"
+        style={{ borderBottom: "1px solid white", flexBasis: "10%" }}
+      >
+        <ActionIcon onClick={() => navigate(-1)}>
+          <IconArrowLeft />
+        </ActionIcon>
+        <Title m="auto">{group.name}</Title>
       </Flex>
-      <ChatMessages group={group} messages={messages} />
+      <ChatMessages messages={messages} />
       <ChatInput
-        sendJsonMessage={props.sendJsonMessage}
-        readyState={props.readyState}
+        sendJsonMessage={websocket.sendJsonMessage}
+        readyState={websocket.readyState}
         groupId={params.chatId}
       />
     </Flex>
   );
 };
 
-const ChatMessages: FC<{
-  group: Group;
-  messages: Message[];
-}> = (props) => {
+const ChatMessages = ({ messages }: { messages: Message[] }) => {
   return (
     <Flex direction="column" style={{ flexGrow: 1 }}>
-      {props.messages.map((message) => {
+      {messages.map((message) => {
         return <SingleChatMessage key={message.id} {...message} />;
       })}
     </Flex>
   );
 };
 
-const SingleChatMessage: FC<Message> = (message) => {
+const SingleChatMessage = (message: Message) => {
   return (
     <Container m={0} w="70%" style={{ border: "1px dashed red" }}>
       <h4 style={{ margin: 0 }}>{message.user_id}</h4>
@@ -67,11 +75,13 @@ const SingleChatMessage: FC<Message> = (message) => {
   );
 };
 
-const ChatInput: FC<{
+type chatInputProps = {
   sendJsonMessage: SendJsonMessage;
   groupId: string | undefined;
   readyState: ReadyState;
-}> = (props) => {
+};
+
+const ChatInput = (props: chatInputProps) => {
   const [newMessage, setNewMessage] = useState("");
 
   const handleClick = () => {
