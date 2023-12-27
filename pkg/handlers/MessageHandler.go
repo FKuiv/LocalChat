@@ -53,18 +53,13 @@ func (handler *messageHandler) GetMessageById(w http.ResponseWriter, r *http.Req
 }
 
 func (handler *messageHandler) CreateMessage(w http.ResponseWriter, r *http.Request) {
-	var message models.MessageRequest
+	var message models.Message
 	err := json.NewDecoder(r.Body).Decode(&message)
 	if utils.DecodingErr(err, "/message", w) {
 		return
 	}
 
-	userCookie, cookieErr := utils.GetUserCookie(r)
-	if utils.CookieError(cookieErr, w) {
-		return
-	}
-
-	newMessage, err := handler.MessageController.Service.CreateMessage(message, userCookie.Value)
+	newMessage, err := handler.MessageController.Service.CreateMessage(message)
 
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error creating message: %s", err), http.StatusInternalServerError)

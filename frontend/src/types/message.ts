@@ -1,8 +1,3 @@
-export type MessageRequest = {
-  group_id: string | undefined;
-  content: string;
-};
-
 export type UpdateMessage = {
   content: string;
 };
@@ -19,5 +14,5 @@ export type Message = {
   content: string;
   created_at: Date;
   updated_at: Date;
-  DeletedAt: boolean | Date;
+  DeletedAt: Date | null;
 };

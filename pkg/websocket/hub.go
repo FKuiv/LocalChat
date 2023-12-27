@@ -13,7 +13,7 @@ type Hub struct {
 	Groups      map[string]*WsGroup
 	Register    chan *Client
 	Unregister  chan *Client
-	Broadcast   chan models.MessageRequest
+	Broadcast   chan models.Message
 	Refresh     chan RefreshMessage
 	controllers *controller.Controllers
 	mutex       sync.Mutex
@@ -35,7 +35,7 @@ func NewHub(controllers *controller.Controllers) *Hub {
 		Groups:      make(map[string]*WsGroup),
 		Register:    make(chan *Client),
 		Unregister:  make(chan *Client),
-		Broadcast:   make(chan models.MessageRequest),
+		Broadcast:   make(chan models.Message),
 		Refresh:     make(chan RefreshMessage),
 		controllers: controllers,
 	}

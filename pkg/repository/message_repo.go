@@ -7,7 +7,6 @@ import (
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
-	gonanoid "github.com/matoous/go-nanoid/v2"
 	"github.com/minio/minio-go/v7"
 	"gorm.io/gorm"
 )
@@ -52,23 +51,15 @@ func (repo *MessageRepo) GetMessageById(messageId string) (*models.Message, erro
 	return &message, nil
 }
 
-func (repo *MessageRepo) CreateMessage(message models.MessageRequest, userId string) (*models.Message, error) {
-	messageId, messageIdErr := gonanoid.New()
-
-	if messageIdErr != nil {
-		log.Println("Error creating message ID", messageIdErr)
-		return nil, messageIdErr
-	}
-
-	newMessage := &models.Message{ID: messageId, Content: message.Content, UserID: userId, GroupID: message.GroupID}
-	result := repo.db.Create(newMessage)
+func (repo *MessageRepo) CreateMessage(message models.Message) (*models.Message, error) {
+	result := repo.db.Create(message)
 
 	if result.Error != nil {
 		log.Println("error saving message:", result.Error)
 		return nil, result.Error
 	}
 
-	return newMessage, nil
+	return &message, nil
 }
 
 func (repo *MessageRepo) DeleteMessage(messageId string, userId string) error {

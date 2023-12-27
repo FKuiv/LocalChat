@@ -10,12 +10,14 @@ import {
 } from "@mantine/core";
 import { Group, defaultGroup } from "@/types/group";
 import { getGroupById } from "@/api/group";
-import { Message, MessageRequest } from "@/types/message";
+import { Message } from "@/types/message";
 import { getMessagesByGroup } from "@/api/message";
 import { IconArrowLeft, IconArrowUp } from "@tabler/icons-react";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
 import { ReadyState } from "react-use-websocket";
 import { WebSocketContext } from "@/WebSocketContext";
+import Cookie from "universal-cookie";
+import { nanoid } from "@reduxjs/toolkit";
 
 const Chat = () => {
   const [group, setGroup] = useState<Group>(defaultGroup);
@@ -83,19 +85,19 @@ type chatInputProps = {
 
 const ChatInput = (props: chatInputProps) => {
   const [newMessage, setNewMessage] = useState("");
+  const cookies = new Cookie();
 
   const handleClick = () => {
-    if (props.groupId === undefined) {
-      console.error("groupId is undefined");
-      return;
-    }
-
-    const wsMessage = {
-      content: newMessage.trim(),
+    const wsMessage: Message = {
+      id: nanoid(),
+      user_id: cookies.get("user_id"),
       group_id: props.groupId,
+      content: newMessage.trim(),
+      created_at: new Date(),
+      updated_at: new Date(),
     };
     console.log("SENDIGN message:", wsMessage);
-    props.sendJsonMessage<MessageRequest>(wsMessage);
+    props.sendJsonMessage<Message>(wsMessage);
   };
 
   return (

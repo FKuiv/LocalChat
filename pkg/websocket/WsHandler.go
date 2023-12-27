@@ -40,7 +40,7 @@ func (hub *Hub) Handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &Client{GroupIds: groupIds, Hub: hub, Socket: conn, Send: make(chan models.MessageRequest), User: *user}
+	client := &Client{GroupIds: groupIds, Hub: hub, Socket: conn, Send: make(chan models.Message), User: *user}
 	client.Hub.Register <- client
 
 	go client.Write()

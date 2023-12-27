@@ -1,12 +1,12 @@
 import { createContext, useState, useEffect } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { WebsocketEndpoints } from "@/api/endpoints";
-import { MessageRequest } from "./types/message";
 import { SendJsonMessage } from "react-use-websocket/dist/lib/types";
+import { Message } from "./types/message";
 
 type WebSocketContextValue = {
   sendJsonMessage: SendJsonMessage;
-  messageHistory: MessageRequest[];
+  messageHistory: Message[];
   readyState: ReadyState;
 };
 
@@ -21,7 +21,7 @@ export const WebSocketProvider = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  const [messageHistory, setMessageHistory] = useState<MessageRequest[]>([]);
+  const [messageHistory, setMessageHistory] = useState<Message[]>([]);
 
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WebsocketEndpoints.base,
@@ -36,7 +36,7 @@ export const WebSocketProvider = ({
     }
   );
 
-  const websocketMessage = lastJsonMessage as MessageRequest;
+  const websocketMessage = lastJsonMessage as Message;
 
   useEffect(() => {
     if (websocketMessage !== null) {

@@ -1,8 +1,8 @@
-import { MessageRequest, UpdateMessage } from "@/types/message";
+import { Message, UpdateMessage } from "@/types/message";
 import { api } from ".";
 import { MessageEndpoints } from "./endpoints";
 
-export const createMessage = (messageData: MessageRequest) => {
+export const createMessage = (messageData: Message) => {
   return api
     .post(MessageEndpoints.base(), messageData)
     .then((response) => response.data)

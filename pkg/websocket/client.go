@@ -12,7 +12,7 @@ type Client struct {
 	models.User
 	Socket   *websocket.Conn
 	Hub      *Hub
-	Send     chan models.MessageRequest
+	Send     chan models.Message
 	GroupIds []string
 }
 
@@ -25,7 +25,7 @@ func (c *Client) Read() {
 
 	for {
 
-		var message models.MessageRequest
+		var message models.Message
 		err := c.Socket.ReadJSON(&message)
 		if err != nil {
 			log.Println(err)
@@ -35,7 +35,7 @@ func (c *Client) Read() {
 		log.Println("Reading message:", message, "with user:", c.Username)
 		c.Hub.Broadcast <- message
 
-		_, dbErr := c.Hub.controllers.MessageController.Service.CreateMessage(models.MessageRequest{GroupID: message.GroupID, Content: message.Content}, c.ID)
+		_, dbErr := c.Hub.controllers.MessageController.Service.CreateMessage(message)
 		if dbErr != nil {
 			log.Println("Error saving message:", dbErr)
 		}
