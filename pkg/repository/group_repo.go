@@ -37,7 +37,7 @@ func (repo *GroupRepo) GetAllGroups() ([]models.Group, error) {
 
 func (repo *GroupRepo) GetGroupById(groupId string) (*models.Group, error) {
 	var group models.Group
-	result := repo.db.First(&group, "id = ?", groupId)
+	result := repo.db.Preload("Users").First(&group, "id = ?", groupId)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		return nil, &utils.CustomError{Message: fmt.Sprintf("Group with ID: %s not found", groupId)}

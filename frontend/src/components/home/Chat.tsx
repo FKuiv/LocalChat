@@ -26,15 +26,25 @@ const Chat = () => {
   const params = useParams();
   const navigate = useNavigate();
   const websocket = useContext(WebSocketContext);
+  const cookies = new Cookie();
+  const userId = cookies.get("UserId");
 
   useEffect(() => {
-    // TODO: redirect user if this happens
     if (!params.groupId) {
       console.error("No group id provided");
       return;
     }
     getGroupById(params.groupId).then((res: Group) => {
-      setGroup(res);
+      if (res.isDm) {
+        const otherUserId = res.users.filter((user) => user.id !== userId)[0]
+          .id;
+        getUsername(otherUserId).then((username: string) => {
+          res.name = username;
+          setGroup(res);
+        });
+      } else {
+        setGroup(res);
+      }
     });
 
     //* make sure to make this request once when first loading the page so you don't get duplicate IDs. If you make a second one than make sure to do something about websocket history
@@ -46,7 +56,7 @@ const Chat = () => {
         setMessages(res);
       });
     }
-  }, [params.groupId, messages.length]);
+  }, [params.groupId, messages.length, userId]);
 
   return (
     <Flex direction="column" h="100%">
@@ -112,7 +122,6 @@ const SingleChatMessage = (message: Message) => {
     containerStyle = { border: "1px dashed blue", alignSelf: "flex-end" };
   }
   getUsername(message.user_id).then((res) => {
-    console.log("username:", res);
     setUsername(res);
   });
 
