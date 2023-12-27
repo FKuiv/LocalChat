@@ -1,7 +1,8 @@
+import { WebSocketContext } from "@/WebSocketContext";
 import { getAllUserGroups } from "@/api/group";
 import { Group } from "@/types/group";
 import { Flex, Container } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router";
 
 const ChatGroups = () => {
@@ -24,7 +25,13 @@ const ChatGroups = () => {
 
 const ChatGroup = (group: Group) => {
   const navigate = useNavigate();
+  const websocket = useContext(WebSocketContext);
+
   const handleClick = () => {
+    websocket?.sendJsonMessage({
+      content: "Hello from the frontend",
+      group: group.id,
+    });
     navigate(`/chat/${group.id}`);
   };
 

@@ -1,4 +1,5 @@
-export const baseUrl = "http://localhost:8000";
+const url = "localhost:8000";
+export const baseUrl = `http://${url}`;
 
 export const UserEndpoints = {
   base: () => `${baseUrl}/user`,
@@ -26,6 +27,6 @@ export const MessageEndpoints = {
 };
 
 export enum WebsocketEndpoints {
-  base = `${baseUrl}/ws`,
+  base = `ws://${url}/ws`,
   refresh = `${baseUrl}/ws/refresh`,
 }

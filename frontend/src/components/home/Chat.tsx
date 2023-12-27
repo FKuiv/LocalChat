@@ -50,7 +50,7 @@ const Chat = () => {
       <ChatInput
         sendJsonMessage={websocket.sendJsonMessage}
         readyState={websocket.readyState}
-        groupId={params.chatId}
+        groupId={params.groupId}
       />
     </Flex>
   );
@@ -85,10 +85,17 @@ const ChatInput = (props: chatInputProps) => {
   const [newMessage, setNewMessage] = useState("");
 
   const handleClick = () => {
-    props.sendJsonMessage<MessageRequest>({
-      content: newMessage,
+    if (props.groupId === undefined) {
+      console.error("groupId is undefined");
+      return;
+    }
+
+    const wsMessage = {
+      content: newMessage.trim(),
       group_id: props.groupId,
-    });
+    };
+    console.log("SENDIGN message:", wsMessage);
+    props.sendJsonMessage<MessageRequest>(wsMessage);
   };
 
   return (

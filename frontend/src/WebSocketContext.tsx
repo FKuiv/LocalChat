@@ -26,8 +26,9 @@ export const WebSocketProvider = ({
   const { sendJsonMessage, lastJsonMessage, readyState } = useWebSocket(
     WebsocketEndpoints.base,
     {
-      onOpen: () => console.log("ws opened"),
+      onOpen: () => console.log("ws OPEN"),
       onClose: () => console.log("ws CLOSED"),
+      onError: (event) => console.error("ws ERROR", event),
       shouldReconnect: (closeEvent) => {
         console.log("The ws close event:", closeEvent);
         return true;
@@ -41,7 +42,8 @@ export const WebSocketProvider = ({
     if (websocketMessage !== null) {
       setMessageHistory((prev) => prev.concat(websocketMessage));
     }
-  }, [websocketMessage]);
+    console.log("THE READY state:", ReadyState[readyState]);
+  }, [websocketMessage, readyState]);
 
   return (
     <WebSocketContext.Provider
