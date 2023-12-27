@@ -40,7 +40,10 @@ export const WebSocketProvider = ({
 
   useEffect(() => {
     if (websocketMessage !== null) {
-      setMessageHistory((prev) => prev.concat(websocketMessage));
+      setMessageHistory((prev) => {
+        console.log("Message history:", prev.concat(websocketMessage));
+        return prev.concat(websocketMessage);
+      });
     }
     console.log("THE READY state:", ReadyState[readyState]);
   }, [websocketMessage, readyState]);

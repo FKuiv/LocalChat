@@ -9,6 +9,7 @@ export const UserEndpoints = {
   logout: () => `${baseUrl}/logout`,
   delete: () => `${baseUrl}/user/delete`,
   profilepic: () => `${baseUrl}/profilepic`,
+  username: (userId: string) => `${baseUrl}/user/username/${userId}`,
 };
 
 export const GroupEndpoints = {

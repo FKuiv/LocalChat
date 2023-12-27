@@ -217,3 +217,22 @@ func (handler *userHandler) GetProfilePic(w http.ResponseWriter, r *http.Request
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(picUrl))
 }
+
+func (handler *userHandler) GetUsername(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userId, idOk := vars["id"]
+
+	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
+		return
+	}
+
+	username, err := handler.UserController.Service.GetUsername(userId)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(username))
+}

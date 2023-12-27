@@ -71,3 +71,13 @@ export const logoutUser = () => {
       throw error;
     });
 };
+
+export const getUsername = (userId: string) => {
+  return api
+    .get(UserEndpoints.username(userId))
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error fetching username:", error);
+      throw error;
+    });
+};

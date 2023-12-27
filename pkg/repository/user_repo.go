@@ -286,3 +286,13 @@ func (repo *UserRepo) GetProfilePic(userId string) (string, error) {
 
 	return presignedURL.String(), nil
 }
+
+func (repo *UserRepo) GetUsername(userId string) (string, error) {
+	user, err := repo.GetUserById(userId)
+
+	if err != nil {
+		return "", err
+	}
+
+	return user.Username, nil
+}
