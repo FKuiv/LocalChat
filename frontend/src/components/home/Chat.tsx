@@ -8,7 +8,7 @@ import {
   Title,
   Tooltip,
 } from "@mantine/core";
-import { Group, defaultGroup } from "@/types/group";
+import { Group, Usernames, defaultGroup } from "@/types/group";
 import { getGroupById } from "@/api/group";
 import { Message } from "@/types/message";
 import { getMessagesByGroup } from "@/api/message";
@@ -18,7 +18,6 @@ import { ReadyState } from "react-use-websocket";
 import { WebSocketContext } from "@/WebSocketContext";
 import Cookie from "universal-cookie";
 import { nanoid } from "@reduxjs/toolkit";
-import { getUsername } from "@/api/user";
 
 const Chat = () => {
   const [group, setGroup] = useState<Group>(defaultGroup);
@@ -35,14 +34,12 @@ const Chat = () => {
       return;
     }
     getGroupById(params.groupId).then((responseGroup: Group) => {
-      if (responseGroup.isDm) {
-        const otherUserId = responseGroup.users.filter(
-          (user) => user.id !== userId
-        )[0].id;
-        getUsername(otherUserId).then((username: string) => {
-          responseGroup.name = username;
-          setGroup(responseGroup);
-        });
+      if (responseGroup.is_dm) {
+        const otherUserId = Object.keys(responseGroup.usernames).filter(
+          (key) => key !== userId
+        )[0];
+        responseGroup.name = responseGroup.usernames[otherUserId];
+        setGroup(responseGroup);
       } else {
         setGroup(responseGroup);
       }
@@ -74,12 +71,7 @@ const Chat = () => {
           <IconSettings />
         </ActionIcon>
       </Flex>
-      <ChatMessages
-        groupId={params.groupId as string}
-        messages={messages}
-        wsMessages={websocket.messageHistory}
-        userId={userId}
-      />
+      <ChatMessages group={group} messages={messages} userId={userId} />
       <ChatInput
         sendJsonMessage={websocket.sendJsonMessage}
         readyState={websocket.readyState}
@@ -91,13 +83,11 @@ const Chat = () => {
 
 const ChatMessages = ({
   messages,
-  wsMessages,
-  groupId,
+  group,
   userId,
 }: {
   messages: Message[];
-  wsMessages: Message[];
-  groupId: string;
+  group: Group;
   userId: string;
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
@@ -106,28 +96,17 @@ const ChatMessages = ({
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages]);
+  }, []);
 
   return (
     <Flex direction="column" style={{ flexGrow: 1, overflow: "auto" }}>
       {messages.map((message) => {
-        if (message.group_id === groupId) {
+        if (message.group_id === group.id) {
           return (
             <SingleChatMessage
               key={message.id}
               message={message}
-              userId={userId}
-            />
-          );
-        }
-      })}
-
-      {wsMessages.map((message) => {
-        if (message.group_id === groupId) {
-          return (
-            <SingleChatMessage
-              key={message.id}
-              message={message}
+              usernameMap={group.usernames}
               userId={userId}
             />
           );
@@ -140,18 +119,19 @@ const ChatMessages = ({
 
 const SingleChatMessage = ({
   message,
+  usernameMap,
   userId,
 }: {
   message: Message;
+  usernameMap: Usernames;
   userId: string;
 }) => {
   const [username, setUsername] = useState<string>("Me");
   let containerStyle = { border: "1px dashed blue", alignSelf: "flex-end" };
 
   if (userId !== message.user_id) {
-    getUsername(message.user_id).then((res) => {
-      setUsername(res);
-    });
+    console.log("THE USERNAEMFjl", usernameMap[message.user_id]);
+    setUsername(usernameMap[message.user_id]);
     containerStyle = { border: "1px dashed red", alignSelf: "flex-start" };
   }
 

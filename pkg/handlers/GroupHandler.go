@@ -57,7 +57,7 @@ func (handler *groupHandler) CreateGroup(w http.ResponseWriter, r *http.Request)
 	if utils.DecodingErr(err, "/group", w) {
 		return
 	}
-
+	fmt.Println(group)
 	newGroup, err := handler.GroupController.Service.CreateGroup(group)
 
 	errString := fmt.Sprintf("%s", err)

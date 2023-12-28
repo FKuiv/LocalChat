@@ -52,7 +52,7 @@ func (repo *GroupRepo) GetGroupById(groupId string) (*models.Group, error) {
 }
 
 func (repo *GroupRepo) CreateGroup(groupInfo models.GroupRequest) (*models.Group, error) {
-	if groupInfo.Name == "" {
+	if !groupInfo.IsDm && groupInfo.Name == "" {
 		return nil, &utils.CustomError{Message: "Group name can't be empty"}
 	}
 
@@ -67,6 +67,7 @@ func (repo *GroupRepo) CreateGroup(groupInfo models.GroupRequest) (*models.Group
 	}
 
 	var users []*models.User
+	usernames := make(map[string]string)
 
 	for _, userId := range groupInfo.UserIDs {
 		var user *models.User
@@ -75,13 +76,17 @@ func (repo *GroupRepo) CreateGroup(groupInfo models.GroupRequest) (*models.Group
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			log.Println("Error finding user", result.Error)
 			return nil, &utils.CustomError{Message: fmt.Sprintf("Error finding user: %s", result.Error)}
-		} else {
-			users = append(users, user)
 		}
+
+		if groupInfo.IsDm {
+			usernames[userId] = user.Username
+		}
+
+		users = append(users, user)
 
 	}
 
-	newGroup := &models.Group{ID: groupId, Name: groupInfo.Name, Users: users, Admins: groupInfo.Admins, IsDm: groupInfo.IsDm}
+	newGroup := &models.Group{ID: groupId, Name: groupInfo.Name, Usernames: usernames, Users: users, Admins: groupInfo.Admins, IsDm: groupInfo.IsDm}
 	result := repo.db.Create(newGroup)
 
 	if result.Error != nil {
@@ -139,9 +144,17 @@ func (repo *GroupRepo) UpdateGroup(newGroupInfo models.GroupRequest, groupId str
 		return nil, &utils.CustomError{Message: fmt.Sprintf("Error getting the group: %s", result.Error)}
 	}
 
+	if currentGroup.Usernames == nil {
+		usernames := make(map[string]string)
+		for _, user := range currentGroup.Users {
+			usernames[user.ID] = user.Username
+		}
+		currentGroup.Usernames = usernames
+	}
+
 	if newGroupInfo.Name != "" {
 		currentGroup.Name = newGroupInfo.Name
-	} else {
+	} else if !currentGroup.IsDm {
 		return nil, &utils.CustomError{Message: "Group name cannot be empty"}
 	}
 
@@ -156,6 +169,7 @@ func (repo *GroupRepo) UpdateGroup(newGroupInfo models.GroupRequest, groupId str
 				log.Println("Error finding user", result.Error)
 				return nil, &utils.CustomError{Message: fmt.Sprintf("Error finding user: %s", result.Error)}
 			} else {
+				currentGroup.Usernames[user.ID] = user.Username
 				users = append(users, user)
 			}
 

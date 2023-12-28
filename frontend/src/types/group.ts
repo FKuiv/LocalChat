@@ -14,24 +14,28 @@ export type UpdateGroup = {
   admins: string[];
 };
 
+export type Usernames = { [key: string]: string };
+
 export type Group = {
   id: string;
   name: string;
+  usernames: Usernames;
   created_at: Date;
   updated_at: Date;
   users: User[];
   messages: Message[];
   admins: string[];
-  isDm: boolean;
+  is_dm: boolean;
 };
 
 export const defaultGroup: Group = {
   id: "",
   name: "",
+  usernames: {},
   created_at: new Date(),
   updated_at: new Date(),
   users: [],
   messages: [],
   admins: [],
-  isDm: false,
+  is_dm: false,
 };

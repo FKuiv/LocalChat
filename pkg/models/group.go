@@ -11,23 +11,25 @@ import (
 
 type Group struct {
 	ID        string    `json:"id" gorm:"primaryKey"`
-	Name      string    `json:"name" gorm:"not null"`
+	Name      string    `json:"name"`
+	Usernames Usernames `json:"usernames" gorm:"type:text"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Users     []*User   `gorm:"many2many:user_groups;" json:"users"`
 	Messages  []Message `json:"messages"` // Every group can have a lot of messages
 	Admins    Admins    `gorm:"type:text" json:"admins"`
-	IsDm      bool      `json:"isDm" gorm:"not null"`
+	IsDm      bool      `json:"is_dm" gorm:"not null"`
 }
 
 type GroupRequest struct {
 	Name    string   `json:"name"`
 	UserIDs []string `json:"user_ids"`
 	Admins  Admins   `json:"admins"`
-	IsDm    bool     `json:"isDm"`
+	IsDm    bool     `json:"is_dm"`
 }
 
 type Admins []string
+type Usernames map[string]string
 
 func (a *Admins) Scan(value interface{}) error {
 	switch v := value.(type) {
@@ -46,4 +48,24 @@ func (a *Admins) Scan(value interface{}) error {
 
 func (a Admins) Value() (driver.Value, error) {
 	return json.Marshal(a)
+}
+
+func (m *Usernames) Scan(value interface{}) error {
+	switch v := value.(type) {
+	case string:
+		if !strings.HasPrefix(v, "{") {
+			newString := fmt.Sprintf("{\"%s\"}", v)
+			return json.Unmarshal([]byte(newString), m)
+		}
+		return json.Unmarshal([]byte(v), m)
+	case []byte:
+		return json.Unmarshal(v, m)
+	default:
+		return errors.New("unsupported Scan, storing driver.Value type " + string(value.([]byte)) + " into type *Usernames")
+	}
+}
+
+func (m Usernames) Value() (driver.Value, error) {
+	// Convert the map to a string value
+	return json.Marshal(m)
 }
