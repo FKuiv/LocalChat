@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router";
 import {
   ActionIcon,
@@ -34,16 +34,17 @@ const Chat = () => {
       console.error("No group id provided");
       return;
     }
-    getGroupById(params.groupId).then((res: Group) => {
-      if (res.isDm) {
-        const otherUserId = res.users.filter((user) => user.id !== userId)[0]
-          .id;
+    getGroupById(params.groupId).then((responseGroup: Group) => {
+      if (responseGroup.isDm) {
+        const otherUserId = responseGroup.users.filter(
+          (user) => user.id !== userId
+        )[0].id;
         getUsername(otherUserId).then((username: string) => {
-          res.name = username;
-          setGroup(res);
+          responseGroup.name = username;
+          setGroup(responseGroup);
         });
       } else {
-        setGroup(res);
+        setGroup(responseGroup);
       }
     });
 
@@ -62,13 +63,13 @@ const Chat = () => {
     <Flex direction="column" h="100%">
       <Flex
         align="center"
-        justify="space-evenly"
+        justify="space-around"
         style={{ borderBottom: "1px solid white", flexBasis: "10%" }}
       >
         <ActionIcon onClick={() => navigate(-1)}>
           <IconArrowLeft />
         </ActionIcon>
-        <Title m="auto">{group.name}</Title>
+        <Title>{group.name}</Title>
         <ActionIcon>
           <IconSettings />
         </ActionIcon>
@@ -77,6 +78,7 @@ const Chat = () => {
         groupId={params.groupId as string}
         messages={messages}
         wsMessages={websocket.messageHistory}
+        userId={userId}
       />
       <ChatInput
         sendJsonMessage={websocket.sendJsonMessage}
@@ -91,39 +93,67 @@ const ChatMessages = ({
   messages,
   wsMessages,
   groupId,
+  userId,
 }: {
   messages: Message[];
   wsMessages: Message[];
   groupId: string;
+  userId: string;
 }) => {
+  const messagesEndRef = useRef<null | HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
   return (
-    <Flex direction="column" style={{ flexGrow: 1, overflow: "scroll" }}>
+    <Flex direction="column" style={{ flexGrow: 1, overflow: "auto" }}>
       {messages.map((message) => {
         if (message.group_id === groupId) {
-          return <SingleChatMessage key={message.id} {...message} />;
+          return (
+            <SingleChatMessage
+              key={message.id}
+              message={message}
+              userId={userId}
+            />
+          );
         }
       })}
 
       {wsMessages.map((message) => {
         if (message.group_id === groupId) {
-          return <SingleChatMessage key={message.id} {...message} />;
+          return (
+            <SingleChatMessage
+              key={message.id}
+              message={message}
+              userId={userId}
+            />
+          );
         }
       })}
+      <div ref={messagesEndRef} />
     </Flex>
   );
 };
 
-const SingleChatMessage = (message: Message) => {
-  const cookies = new Cookie();
-  const [username, setUsername] = useState<string>("");
-  let containerStyle = { border: "1px dashed red", alignSelf: "flex-start" };
+const SingleChatMessage = ({
+  message,
+  userId,
+}: {
+  message: Message;
+  userId: string;
+}) => {
+  const [username, setUsername] = useState<string>("Me");
+  let containerStyle = { border: "1px dashed blue", alignSelf: "flex-end" };
 
-  if (cookies.get("UserId") !== message.user_id) {
-    containerStyle = { border: "1px dashed blue", alignSelf: "flex-end" };
+  if (userId !== message.user_id) {
+    getUsername(message.user_id).then((res) => {
+      setUsername(res);
+    });
+    containerStyle = { border: "1px dashed red", alignSelf: "flex-start" };
   }
-  getUsername(message.user_id).then((res) => {
-    setUsername(res);
-  });
 
   return (
     <Container m={0} w="70%" style={containerStyle}>
