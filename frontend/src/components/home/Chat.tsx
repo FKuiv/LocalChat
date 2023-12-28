@@ -22,6 +22,7 @@ import { nanoid } from "@reduxjs/toolkit";
 const Chat = () => {
   const [group, setGroup] = useState<Group>(defaultGroup);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [fetchNewMessages, setFetchNewMessages] = useState<boolean>(true);
   const params = useParams();
   const navigate = useNavigate();
   const websocket = useContext(WebSocketContext);
@@ -48,13 +49,14 @@ const Chat = () => {
     //* make sure to make this request once when first loading the page so you don't get duplicate IDs. If you make a second one than make sure to do something about websocket history
     // TODO: make sure to make this request when the user scrolls to the top of the page
     // TODO: after a certain amount of inactivity, make sure to make this request again and clear webscoket message history
-    if (messages.length < 50) {
+    if (fetchNewMessages) {
       getMessagesByGroup(params.groupId, 50).then((res: Message[]) => {
         console.log("Making request to get messages by group");
         setMessages(res);
+        setFetchNewMessages(false);
       });
     }
-  }, [params.groupId, messages.length, userId]);
+  }, [params.groupId, userId, messages.length, fetchNewMessages]);
 
   return (
     <Flex direction="column" h="100%">
@@ -71,7 +73,12 @@ const Chat = () => {
           <IconSettings />
         </ActionIcon>
       </Flex>
-      <ChatMessages group={group} messages={messages} userId={userId} />
+      <ChatMessages
+        group={group}
+        newMessages={fetchNewMessages}
+        messages={messages.concat(websocket.messageHistory)}
+        userId={userId}
+      />
       <ChatInput
         sendJsonMessage={websocket.sendJsonMessage}
         readyState={websocket.readyState}
@@ -85,10 +92,12 @@ const ChatMessages = ({
   messages,
   group,
   userId,
+  newMessages,
 }: {
   messages: Message[];
   group: Group;
   userId: string;
+  newMessages: boolean;
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
@@ -96,7 +105,7 @@ const ChatMessages = ({
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, []);
+  }, [newMessages]);
 
   return (
     <Flex direction="column" style={{ flexGrow: 1, overflow: "auto" }}>
@@ -127,13 +136,16 @@ const SingleChatMessage = ({
   userId: string;
 }) => {
   const [username, setUsername] = useState<string>("Me");
-  let containerStyle = { border: "1px dashed blue", alignSelf: "flex-end" };
-
-  if (userId !== message.user_id) {
-    console.log("THE USERNAEMFjl", usernameMap[message.user_id]);
-    setUsername(usernameMap[message.user_id]);
-    containerStyle = { border: "1px dashed red", alignSelf: "flex-start" };
-  }
+  const [containerStyle, setContainerStyle] = useState({
+    border: "1px dashed blue",
+    alignSelf: "flex-end",
+  });
+  useEffect(() => {
+    if (userId !== message.user_id) {
+      setUsername(usernameMap[message.user_id]);
+      setContainerStyle({ border: "1px dashed red", alignSelf: "flex-start" });
+    }
+  }, [userId, message.user_id, usernameMap]);
 
   return (
     <Container m={0} w="70%" style={containerStyle}>
