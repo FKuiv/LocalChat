@@ -81,3 +81,23 @@ export const getUsername = (userId: string) => {
       throw error;
     });
 };
+
+export const uploadUserPicture = (formData: FormData) => {
+  return api
+    .post(UserEndpoints.picture(), formData)
+    .then((response) => response)
+    .catch((error) => {
+      console.error("Error uploading user picture:", error);
+      throw error;
+    });
+};
+
+export const getUserPicture = () => {
+  return api
+    .get(UserEndpoints.picture())
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error fetching user picture:", error);
+      throw error;
+    });
+};

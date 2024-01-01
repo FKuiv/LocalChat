@@ -61,3 +61,23 @@ export const getAllUserGroups = () => {
       throw error;
     });
 };
+
+export const uploadGroupPicture = (groupId: string, formData: FormData) => {
+  return api
+    .post(GroupEndpoints.picture(groupId), formData)
+    .then((response) => response)
+    .catch((error) => {
+      console.error("Error uploading group picture:", error);
+      throw error;
+    });
+};
+
+export const getGroupPicture = (groupId: string) => {
+  return api
+    .get(GroupEndpoints.picture(groupId))
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error getting group picture:", error);
+      throw error;
+    });
+};
