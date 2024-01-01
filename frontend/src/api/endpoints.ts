@@ -8,7 +8,7 @@ export const UserEndpoints = {
   login: () => `${baseUrl}/login`,
   logout: () => `${baseUrl}/logout`,
   delete: () => `${baseUrl}/user/delete`,
-  profilepic: () => `${baseUrl}/profilepic`,
+  picture: () => `${baseUrl}/user/picture`,
   username: (userId: string) => `${baseUrl}/user/username/${userId}`,
 };
 
@@ -17,6 +17,7 @@ export const GroupEndpoints = {
   getAll: () => `${baseUrl}/groups`,
   getAllUserGroups: () => `${baseUrl}/groups/user`,
   byId: (groupId: string | undefined) => `${baseUrl}/group/${groupId}`,
+  picture: (groupId: string) => `${baseUrl}/group/picture/${groupId}`,
 };
 
 export const MessageEndpoints = {

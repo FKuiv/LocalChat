@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"mime/multipart"
+
 	"github.com/FKuiv/LocalChat/pkg/models"
 	repos "github.com/FKuiv/LocalChat/pkg/repository"
 )
@@ -14,6 +16,8 @@ type group_repository interface {
 	GetGroupUserIds(groupId string) ([]string, error)
 	GetAllUserGroups(userId string) ([]models.Group, error)
 	GetAllUserGroupIds(userId string) ([]string, error)
+	SaveGroupPic(picture multipart.File, pictureInfo *multipart.FileHeader, groupId string) error
+	GetGroupPic(groupId string) (string, error)
 }
 
 type GroupController struct {

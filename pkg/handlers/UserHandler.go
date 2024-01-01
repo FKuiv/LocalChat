@@ -175,7 +175,7 @@ func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseMultipartForm(5 * utils.MB); err != nil {
+	if err := r.ParseMultipartForm(utils.MULTIPART_FORM_MAX_MEMORY); err != nil {
 		http.Error(w, fmt.Sprintf("error parsing request: %s", err), http.StatusBadRequest)
 		return
 	}
@@ -185,7 +185,7 @@ func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Requ
 	}
 
 	// Limit upload size
-	r.Body = http.MaxBytesReader(w, r.Body, 5*utils.MB) // 5 Mb
+	r.Body = http.MaxBytesReader(w, r.Body, utils.MULTIPART_FORM_MAX_MEMORY) // 5 Mb
 
 	file, multipartFileHeader, err := r.FormFile("picture")
 	if err != nil {

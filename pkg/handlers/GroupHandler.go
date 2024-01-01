@@ -154,3 +154,53 @@ func (handler *groupHandler) GetAllUserGroups(w http.ResponseWriter, r *http.Req
 
 	json.NewEncoder(w).Encode(userGroups)
 }
+
+func (handler *groupHandler) UploadGroupPic(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	groupId, idOk := vars["id"]
+
+	if utils.MuxVarsNotProvided(idOk, groupId, "Group ID", w) {
+		return
+	}
+
+	if err := r.ParseMultipartForm(utils.MULTIPART_FORM_MAX_MEMORY); err != nil {
+		http.Error(w, fmt.Sprintf("error parsing request: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	// Limit upload size
+	r.Body = http.MaxBytesReader(w, r.Body, utils.MULTIPART_FORM_MAX_MEMORY) // 5 Mb
+
+	file, multipartFileHeader, err := r.FormFile("picture")
+	if err != nil {
+		http.Error(w, fmt.Sprintf("error parsing request: %s", err), http.StatusBadRequest)
+		return
+	}
+
+	if err := handler.GroupController.Service.SaveGroupPic(file, multipartFileHeader, groupId); err != nil {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("File uploaded successfully"))
+}
+
+func (handler *groupHandler) GetGroupPic(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	groupId, idOk := vars["id"]
+
+	if utils.MuxVarsNotProvided(idOk, groupId, "Group ID", w) {
+		return
+	}
+
+	picUrl, err := handler.GroupController.Service.GetGroupPic(groupId)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(picUrl))
+}

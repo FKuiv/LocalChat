@@ -38,8 +38,6 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/login", handlers.UserHandler.Login).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/logout", handlers.UserHandler.Logout).Methods(http.MethodGet)
 
-	muxRouter.HandleFunc("/profilepic", handlers.UserHandler.UploadProfilePic).Methods(http.MethodPost)
-	muxRouter.HandleFunc("/profilepic", handlers.UserHandler.GetProfilePic).Methods(http.MethodGet)
 	// User
 	muxRouter.HandleFunc("/user", handlers.UserHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", handlers.UserHandler.GetAllUsers).Methods(http.MethodGet)
@@ -47,6 +45,8 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/user", handlers.UserHandler.UpdateUser).Methods(http.MethodPut)
 	muxRouter.HandleFunc("/user/delete", handlers.UserHandler.DeleteUser).Methods(http.MethodDelete)
 	muxRouter.HandleFunc("/user/username/{id}", handlers.UserHandler.GetUsername).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/user/picture", handlers.UserHandler.UploadProfilePic).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/user/picture", handlers.UserHandler.GetProfilePic).Methods(http.MethodGet)
 
 	// Group
 	muxRouter.HandleFunc("/group", handlers.GroupHandler.CreateGroup).Methods(http.MethodPost)
@@ -55,6 +55,8 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.GetGroupById).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.UpdateGroup).Methods(http.MethodPut)
 	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.DeleteGroup).Methods(http.MethodDelete)
+	muxRouter.HandleFunc("/group/picture/{id}", handlers.GroupHandler.UploadGroupPic).Methods(http.MethodPost)
+	muxRouter.HandleFunc("/group/picture/{id}", handlers.GroupHandler.GetGroupPic).Methods(http.MethodGet)
 
 	// Message
 	muxRouter.HandleFunc("/message", handlers.MessageHandler.CreateMessage).Methods(http.MethodPost)

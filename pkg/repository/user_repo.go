@@ -264,7 +264,7 @@ func (repo *UserRepo) SaveProfilePic(picture multipart.File, pictureInfo *multip
 
 	userTags := map[string]string{"user_id": userId}
 
-	_, err := repo.minio.PutObject(context.Background(), "localchat", utils.UserProfilePicName(userId), picture, pictureInfo.Size, minio.PutObjectOptions{ContentType: http.DetectContentType(pictureHeader), UserMetadata: userTags})
+	_, err := repo.minio.PutObject(context.Background(), utils.MINIO_bucket, utils.UserProfilePicName(userId), picture, pictureInfo.Size, minio.PutObjectOptions{ContentType: http.DetectContentType(pictureHeader), UserMetadata: userTags})
 
 	if err != nil {
 		return err
@@ -276,10 +276,10 @@ func (repo *UserRepo) SaveProfilePic(picture multipart.File, pictureInfo *multip
 func (repo *UserRepo) GetProfilePic(userId string) (string, error) {
 	// Set request parameters for content-disposition.
 	reqParams := make(url.Values)
-	urlExpiration := time.Second * 60
+	urlExpiration := utils.URL_expiration_time
 
 	// Generates a presigned url which expires in a 1 minutes.
-	presignedURL, err := repo.minio.PresignedGetObject(context.Background(), "localchat", utils.UserProfilePicName(userId), urlExpiration, reqParams)
+	presignedURL, err := repo.minio.PresignedGetObject(context.Background(), utils.MINIO_bucket, utils.UserProfilePicName(userId), urlExpiration, reqParams)
 	if err != nil {
 		return "", err
 	}

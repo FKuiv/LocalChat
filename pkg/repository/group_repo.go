@@ -1,9 +1,13 @@
 package repository
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
+	"mime/multipart"
+	"net/http"
+	"net/url"
 
 	"github.com/FKuiv/LocalChat/pkg/models"
 	"github.com/FKuiv/LocalChat/pkg/utils"
@@ -236,4 +240,43 @@ func (repo *GroupRepo) GetAllUserGroupIds(userId string) ([]string, error) {
 	}
 
 	return groupIds, nil
+}
+
+func (repo *GroupRepo) SaveGroupPic(picture multipart.File, pictureInfo *multipart.FileHeader, groupId string) error {
+	// Create a buffer to store the header of the file in
+	pictureHeader := make([]byte, 512)
+
+	// Copy the headers into the FileHeader buffer
+	if _, err := picture.Read(pictureHeader); err != nil {
+		return err
+	}
+
+	// set position back to start.
+	if _, err := picture.Seek(0, 0); err != nil {
+		return err
+	}
+
+	groupTags := map[string]string{"group_id": groupId}
+
+	_, err := repo.minio.PutObject(context.Background(), utils.MINIO_bucket, utils.GroupProfilePicName(groupId), picture, pictureInfo.Size, minio.PutObjectOptions{ContentType: http.DetectContentType(pictureHeader), UserMetadata: groupTags})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *GroupRepo) GetGroupPic(groupId string) (string, error) {
+	// Set request parameters for content-disposition.
+	reqParams := make(url.Values)
+	urlExpiration := utils.URL_expiration_time
+
+	// Generates a presigned url which expires in a 1 minutes.
+	presignedURL, err := repo.minio.PresignedGetObject(context.Background(), utils.MINIO_bucket, utils.GroupProfilePicName(groupId), urlExpiration, reqParams)
+	if err != nil {
+		return "", err
+	}
+
+	return presignedURL.String(), nil
 }
