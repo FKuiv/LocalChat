@@ -203,12 +203,14 @@ func (handler *userHandler) UploadProfilePic(w http.ResponseWriter, r *http.Requ
 }
 
 func (handler *userHandler) GetProfilePic(w http.ResponseWriter, r *http.Request) {
-	userCookie, cookieErr := utils.GetUserCookie(r)
-	if utils.CookieError(cookieErr, w) {
+	vars := mux.Vars(r)
+	userId, idOk := vars["id"]
+
+	if utils.MuxVarsNotProvided(idOk, userId, "User ID", w) {
 		return
 	}
 
-	picUrl, err := handler.UserController.Service.GetProfilePic(userCookie.Value)
+	picUrl, err := handler.UserController.Service.GetProfilePic(userId)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s", err), http.StatusInternalServerError)
 		return

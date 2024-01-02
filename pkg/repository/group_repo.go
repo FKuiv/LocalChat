@@ -82,10 +82,7 @@ func (repo *GroupRepo) CreateGroup(groupInfo models.GroupRequest) (*models.Group
 			return nil, &utils.CustomError{Message: fmt.Sprintf("Error finding user: %s", result.Error)}
 		}
 
-		if groupInfo.IsDm {
-			usernames[userId] = user.Username
-		}
-
+		usernames[userId] = user.Username
 		users = append(users, user)
 
 	}

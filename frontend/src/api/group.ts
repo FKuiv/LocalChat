@@ -55,7 +55,7 @@ export const deleteGroup = (id: string) => {
 export const getAllUserGroups = () => {
   return api
     .get(GroupEndpoints.getAllUserGroups())
-    .then((response) => response)
+    .then((response) => response.data)
     .catch((error) => {
       console.error("Error getting user groups:", error);
       throw error;

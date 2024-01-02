@@ -7,9 +7,10 @@ import {
   TextInput,
   Title,
   Tooltip,
+  Avatar,
 } from "@mantine/core";
 import { Group, Usernames, defaultGroup } from "@/types/group";
-import { getGroupById } from "@/api/group";
+import { getGroupById, getGroupPicture } from "@/api/group";
 import { Message } from "@/types/message";
 import { getMessagesByGroup } from "@/api/message";
 import { IconArrowLeft, IconArrowUp, IconSettings } from "@tabler/icons-react";
@@ -18,11 +19,17 @@ import { ReadyState } from "react-use-websocket";
 import { WebSocketContext } from "@/WebSocketContext";
 import Cookie from "universal-cookie";
 import { nanoid } from "@reduxjs/toolkit";
+import { getUserPicture } from "@/api/user";
+import GetOtherUsername, {
+  GetUsernameInitials,
+} from "@/utils/GetOtherUsername";
+import GetOtherUserId from "@/utils/GetOtherUserId";
 
 const Chat = () => {
   const [group, setGroup] = useState<Group>(defaultGroup);
   const [messages, setMessages] = useState<Message[]>([]);
   const [fetchNewMessages, setFetchNewMessages] = useState<boolean>(true);
+  const [picUrl, setPicUrl] = useState<string>();
   const params = useParams();
   const navigate = useNavigate();
   const websocket = useContext(WebSocketContext);
@@ -36,12 +43,17 @@ const Chat = () => {
     }
     getGroupById(params.groupId).then((responseGroup: Group) => {
       if (responseGroup.is_dm) {
-        const otherUserId = Object.keys(responseGroup.usernames).filter(
-          (key) => key !== userId
-        )[0];
-        responseGroup.name = responseGroup.usernames[otherUserId];
+        responseGroup.name = GetOtherUsername(responseGroup.usernames, userId);
         setGroup(responseGroup);
+        getUserPicture(GetOtherUserId(responseGroup.usernames, userId)).then(
+          (res: string) => {
+            setPicUrl(res);
+          }
+        );
       } else {
+        getGroupPicture(responseGroup.id).then((res: string) => {
+          setPicUrl(res);
+        });
         setGroup(responseGroup);
       }
     });
@@ -68,7 +80,19 @@ const Chat = () => {
         <ActionIcon onClick={() => navigate(-1)}>
           <IconArrowLeft />
         </ActionIcon>
-        <Title>{group.name}</Title>
+        <Flex direction="row" align="center" justify="center" gap={10}>
+          <Avatar
+            src={picUrl}
+            alt={group.usernames[GetOtherUserId(group.usernames, userId)]}
+          >
+            {group.is_dm
+              ? GetUsernameInitials(
+                  group.usernames[GetOtherUserId(group.usernames, userId)]
+                )
+              : GetUsernameInitials(group.name)}
+          </Avatar>
+          <Title order={3}>{group.name}</Title>
+        </Flex>
         <ActionIcon>
           <IconSettings />
         </ActionIcon>

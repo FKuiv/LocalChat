@@ -92,9 +92,9 @@ export const uploadUserPicture = (formData: FormData) => {
     });
 };
 
-export const getUserPicture = () => {
+export const getUserPicture = (userId: string) => {
   return api
-    .get(UserEndpoints.picture())
+    .get(UserEndpoints.getPicture(userId))
     .then((response) => response.data)
     .catch((error) => {
       console.error("Error fetching user picture:", error);
