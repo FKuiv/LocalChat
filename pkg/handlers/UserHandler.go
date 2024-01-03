@@ -164,11 +164,7 @@ func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Deleting cookies
-	sessionCookie := http.Cookie{Name: "Session", Value: "", Domain: "localhost", Path: "/", MaxAge: -1, HttpOnly: true}
-	http.SetCookie(w, &sessionCookie)
-
-	userCookie := http.Cookie{Name: "UserId", Value: "", Domain: "localhost", Path: "/", MaxAge: -1, HttpOnly: false}
-	http.SetCookie(w, &userCookie)
+	utils.DeleteCookies(w)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Session deleted successfully"))
