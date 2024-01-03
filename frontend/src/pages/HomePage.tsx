@@ -2,8 +2,8 @@ import { AppShell, Burger, useMantineTheme } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import Navbar from "@/components/navigation/Navbar";
 import Logo from "@/components/ui/Logo";
-import SettingsPage from "./SettingsPage";
 import ChatGroups from "@/components/home/ChatGroups";
+import SettingsPage from "./SettingsPage";
 
 const HomePage = () => {
   const [opened, { toggle }] = useDisclosure();

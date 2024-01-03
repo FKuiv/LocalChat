@@ -1,4 +1,6 @@
+import { createGroup, uploadGroupPicture } from "@/api/group";
 import { getAllUsersMap } from "@/api/user";
+import { Group, GroupRequest } from "@/types/group";
 import {
   Button,
   Modal,
@@ -9,26 +11,29 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import Cookie from "universal-cookie";
 
 type createGroupModalProps = {
   opened: boolean;
   onClose: () => void;
 };
-type formValues = {
-  name: string;
+type formValues = GroupRequest & {
   picture: File | null;
-  members: string[];
-  admins: string[];
 };
 
 const CreateGroupModal = (props: createGroupModalProps) => {
   const [usersMap, setUsersMap] = useState<Record<string, string>>({});
+  const cookies = new Cookie();
+  const userId = cookies.get("UserId") as string;
+  const navigate = useNavigate();
   const form = useForm<formValues>({
     initialValues: {
       name: "",
       picture: null,
-      members: [],
+      user_ids: [],
       admins: [],
+      isDm: false,
     },
 
     validate: {
@@ -41,11 +46,11 @@ const CreateGroupModal = (props: createGroupModalProps) => {
         }
         return "File is required";
       },
-      members: (value) => {
-        return value.length === 0 ? "Members are required" : null;
+      user_ids: (value) => {
+        return value.length <= 2 ? "At least 3 users are required" : null;
       },
       admins: (value) => {
-        return value.length === 0 ? "Admins are required" : null;
+        return value.length === 0 ? "At least 1 admin is required" : null;
       },
     },
   });
@@ -56,11 +61,53 @@ const CreateGroupModal = (props: createGroupModalProps) => {
         setUsersMap(res);
       });
     }
-    console.log("formvalues", form.values);
-  }, [usersMap, form]);
+    if (Object.keys(usersMap).length > 0) {
+      if (form.values.user_ids.length === 0) {
+        form.insertListItem(
+          "user_ids",
+          Object.keys(usersMap).find(
+            (username) => usersMap[username] === userId
+          ) as string,
+          0
+        );
+      }
+      if (form.values.admins.length === 0) {
+        form.insertListItem(
+          "admins",
+          Object.keys(usersMap).find(
+            (username) => usersMap[username] === userId
+          ) as string,
+          0
+        );
+      }
+    }
+  }, [usersMap, form, userId]);
 
   const handleFormSubmit = (values: formValues) => {
-    console.log("values", values);
+    const userIds = values.user_ids.map((user) => {
+      return usersMap[user];
+    });
+    const adminIds = values.admins.map((admin) => {
+      return usersMap[admin];
+    });
+    // This way the user can see the IDs because the form values are changed
+    values.user_ids = userIds;
+    values.admins = adminIds;
+    const formData = new FormData();
+    formData.append("picture", values.picture as Blob);
+
+    createGroup({
+      name: values.name,
+      user_ids: values.user_ids,
+      admins: values.admins,
+      isDm: values.isDm,
+    }).then((newGroup: Group) => {
+      uploadGroupPicture(newGroup.id, formData).then((res) => {
+        if (res.status === 200) {
+          navigate(`/chat/${newGroup.id}`);
+        }
+      });
+    });
   };
 
   return (
@@ -92,7 +139,7 @@ const CreateGroupModal = (props: createGroupModalProps) => {
             data={Object.keys(usersMap)}
             searchable
             clearable
-            {...form.getInputProps("members")}
+            {...form.getInputProps("user_ids")}
           />
 
           <MultiSelect
@@ -105,7 +152,7 @@ const CreateGroupModal = (props: createGroupModalProps) => {
           />
 
           <Button type="submit" variant="light">
-            Create
+            Create group
           </Button>
         </Flex>
       </form>

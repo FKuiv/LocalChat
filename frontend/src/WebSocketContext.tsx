@@ -29,10 +29,7 @@ export const WebSocketProvider = ({
       onOpen: () => console.log("ws OPEN"),
       onClose: () => console.log("ws CLOSED"),
       onError: (event) => console.error("ws ERROR", event),
-      shouldReconnect: (closeEvent) => {
-        console.log("The ws close event:", closeEvent);
-        return true;
-      },
+      shouldReconnect: () => true,
     }
   );
 

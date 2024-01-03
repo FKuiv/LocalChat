@@ -94,7 +94,9 @@ export const getUsername = (userId: string) => {
 
 export const uploadUserPicture = (formData: FormData) => {
   return api
-    .post(UserEndpoints.picture(), formData)
+    .post(UserEndpoints.picture(), formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
     .then((response) => response)
     .catch((error) => {
       console.error("Error uploading user picture:", error);

@@ -1,8 +1,7 @@
-import { getAllUserGroups } from "@/api/group";
+import { getAllUserGroups, getGroupPicture } from "@/api/group";
 import { getUserPicture } from "@/api/user";
 import { Group } from "@/types/group";
 import GetOtherUserId from "@/utils/GetOtherUserId";
-import { GetUsernameInitials } from "@/utils/GetOtherUsername";
 import { Flex, Container, Avatar, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
@@ -37,12 +36,14 @@ const ChatGroup = (group: Group) => {
   };
 
   useEffect(() => {
-    console.log("group", group);
     if (group.is_dm) {
       getUserPicture(otherUserId).then((res: string) => {
         setPicUrl(res);
       });
     } else {
+      getGroupPicture(group.id).then((res: string) => {
+        setPicUrl(res);
+      });
       return;
     }
   }, [group, otherUserId]);
@@ -55,9 +56,11 @@ const ChatGroup = (group: Group) => {
       onClick={handleClick}
     >
       <Flex direction="row" align="center" gap="md" h="100%">
-        <Avatar src={picUrl} alt={group.usernames[otherUserId]} size="lg">
-          {GetUsernameInitials(group.usernames[otherUserId])}
-        </Avatar>
+        <Avatar
+          src={picUrl}
+          alt={group.is_dm ? group.usernames[otherUserId] : group.name}
+          size="lg"
+        />
         <Title order={3}>
           {group.is_dm ? group.usernames[otherUserId] : group.name}
         </Title>

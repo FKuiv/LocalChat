@@ -8,6 +8,7 @@ import {
   Title,
   Tooltip,
   Avatar,
+  Stack,
 } from "@mantine/core";
 import { Group, Usernames, defaultGroup } from "@/types/group";
 import { getGroupById, getGroupPicture } from "@/api/group";
@@ -20,9 +21,7 @@ import { WebSocketContext } from "@/WebSocketContext";
 import Cookie from "universal-cookie";
 import { nanoid } from "@reduxjs/toolkit";
 import { getUserPicture } from "@/api/user";
-import GetOtherUsername, {
-  GetUsernameInitials,
-} from "@/utils/GetOtherUsername";
+import GetOtherUsername from "@/utils/GetOtherUsername";
 import GetOtherUserId from "@/utils/GetOtherUserId";
 
 const Chat = () => {
@@ -44,7 +43,6 @@ const Chat = () => {
     getGroupById(params.groupId).then((responseGroup: Group) => {
       if (responseGroup.is_dm) {
         responseGroup.name = GetOtherUsername(responseGroup.usernames, userId);
-        setGroup(responseGroup);
         getUserPicture(GetOtherUserId(responseGroup.usernames, userId)).then(
           (res: string) => {
             setPicUrl(res);
@@ -54,8 +52,8 @@ const Chat = () => {
         getGroupPicture(responseGroup.id).then((res: string) => {
           setPicUrl(res);
         });
-        setGroup(responseGroup);
       }
+      setGroup(responseGroup);
     });
 
     //* make sure to make this request once when first loading the page so you don't get duplicate IDs. If you make a second one than make sure to do something about websocket history
@@ -83,26 +81,26 @@ const Chat = () => {
         <Flex direction="row" align="center" justify="center" gap={10}>
           <Avatar
             src={picUrl}
-            alt={group.usernames[GetOtherUserId(group.usernames, userId)]}
+            alt={
+              group.is_dm
+                ? group.usernames[GetOtherUserId(group.usernames, userId)]
+                : group.name
+            }
             size="lg"
-          >
-            {group.is_dm
-              ? GetUsernameInitials(
-                  group.usernames[GetOtherUserId(group.usernames, userId)]
-                )
-              : GetUsernameInitials(group.name)}
-          </Avatar>
+          />
           <Title order={3}>{group.name}</Title>
         </Flex>
         <ActionIcon>
           <IconSettings />
         </ActionIcon>
       </Flex>
+
       <ChatMessages
         group={group}
         newMessages={fetchNewMessages}
         messages={messages.concat(websocket.messageHistory)}
         userId={userId}
+        picUrl={picUrl}
       />
       <ChatInput
         sendJsonMessage={websocket.sendJsonMessage}
@@ -118,11 +116,13 @@ const ChatMessages = ({
   group,
   userId,
   newMessages,
+  picUrl,
 }: {
   messages: Message[];
   group: Group;
   userId: string;
   newMessages: boolean;
+  picUrl: string | undefined;
 }) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
@@ -134,6 +134,28 @@ const ChatMessages = ({
 
   return (
     <Flex direction="column" style={{ flexGrow: 1, overflow: "scroll" }}>
+      <Stack
+        h="50%"
+        p={10}
+        align="center"
+        style={{ textAlign: "center", borderBottom: "1px dashed gray" }}
+      >
+        <Avatar
+          src={picUrl}
+          alt={
+            group.is_dm
+              ? group.usernames[GetOtherUserId(group.usernames, userId)]
+              : group.name
+          }
+          size="50%"
+        />
+        <Title>
+          {group.is_dm
+            ? group.usernames[GetOtherUserId(group.usernames, userId)]
+            : group.name}
+        </Title>
+        {/* Display some stats about the group, like how many members. If it's a DM, then like last online or something */}
+      </Stack>
       {messages.map((message) => {
         if (message.group_id === group.id) {
           return (

@@ -64,7 +64,9 @@ export const getAllUserGroups = () => {
 
 export const uploadGroupPicture = (groupId: string, formData: FormData) => {
   return api
-    .post(GroupEndpoints.picture(groupId), formData)
+    .post(GroupEndpoints.picture(groupId), formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
     .then((response) => response)
     .catch((error) => {
       console.error("Error uploading group picture:", error);
