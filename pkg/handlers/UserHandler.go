@@ -33,6 +33,17 @@ func (handler *userHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(users)
 }
 
+func (handler *userHandler) GetAllUsersMap(w http.ResponseWriter, r *http.Request) {
+	users, err := handler.UserController.Service.GetAllUsersMap()
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("There was an error getting users: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(users)
+}
+
 func (handler *userHandler) GetUserById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	userId, idOk := vars["id"]

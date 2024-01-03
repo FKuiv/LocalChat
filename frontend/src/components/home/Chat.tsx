@@ -84,6 +84,7 @@ const Chat = () => {
           <Avatar
             src={picUrl}
             alt={group.usernames[GetOtherUserId(group.usernames, userId)]}
+            size="lg"
           >
             {group.is_dm
               ? GetUsernameInitials(
@@ -132,7 +133,7 @@ const ChatMessages = ({
   }, [newMessages]);
 
   return (
-    <Flex direction="column" style={{ flexGrow: 1, overflow: "auto" }}>
+    <Flex direction="column" style={{ flexGrow: 1, overflow: "scroll" }}>
       {messages.map((message) => {
         if (message.group_id === group.id) {
           return (
@@ -199,7 +200,6 @@ const ChatInput = (props: chatInputProps) => {
       updated_at: new Date(),
       DeletedAt: null,
     };
-    console.log("SENDIGN message:", wsMessage);
     props.sendJsonMessage<Message>(wsMessage);
   };
 
@@ -208,7 +208,7 @@ const ChatInput = (props: chatInputProps) => {
       direction="row"
       align="center"
       justify="space-around"
-      style={{ borderTop: "1px solid white", flexBasis: "8%" }}
+      style={{ borderTop: "1px solid white", flexBasis: "10%" }}
     >
       <TextInput
         placeholder="Send a message"

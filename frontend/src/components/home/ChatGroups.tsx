@@ -18,7 +18,7 @@ const ChatGroups = () => {
   }, []);
 
   return (
-    <Flex w="100%" direction="column">
+    <Flex w="100%" h="100%" direction="column">
       {groups?.map((group: Group) => (
         <ChatGroup {...group} key={group.id} />
       ))}
@@ -50,13 +50,12 @@ const ChatGroup = (group: Group) => {
   return (
     <Container
       w="100%"
-      h={60}
-      bg="var(--mantine-color-grape-9)"
-      style={{ borderBottom: "1px solid black" }}
+      h={80}
+      style={{ borderBottom: "1px solid var(--_app-shell-border-color)" }}
       onClick={handleClick}
     >
       <Flex direction="row" align="center" gap="md" h="100%">
-        <Avatar src={picUrl} alt={group.usernames[otherUserId]}>
+        <Avatar src={picUrl} alt={group.usernames[otherUserId]} size="lg">
           {GetUsernameInitials(group.usernames[otherUserId])}
         </Avatar>
         <Title order={3}>

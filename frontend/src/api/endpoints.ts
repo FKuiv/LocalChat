@@ -4,6 +4,7 @@ export const baseUrl = `http://${url}`;
 export const UserEndpoints = {
   base: () => `${baseUrl}/user`,
   getAll: () => `${baseUrl}/users`,
+  getAllMap: () => `${baseUrl}/users/map`,
   byId: (userId: string) => `${baseUrl}/user/${userId}`,
   login: () => `${baseUrl}/login`,
   logout: () => `${baseUrl}/logout`,

@@ -41,6 +41,7 @@ func StartHTTPServer() {
 	// User
 	muxRouter.HandleFunc("/user", handlers.UserHandler.CreateUser).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/users", handlers.UserHandler.GetAllUsers).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/users/map", handlers.UserHandler.GetAllUsersMap).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user/{id}", handlers.UserHandler.GetUserById).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/user", handlers.UserHandler.UpdateUser).Methods(http.MethodPut)
 	muxRouter.HandleFunc("/user/delete", handlers.UserHandler.DeleteUser).Methods(http.MethodDelete)

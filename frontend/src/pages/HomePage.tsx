@@ -16,13 +16,21 @@ const HomePage = () => {
       navbar={{ width: 300, breakpoint: "sm", collapsed: { mobile: !opened } }}
     >
       <AppShell.Header className="header">
-        <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+        <Burger
+          style={{ flexBasis: 1, marginLeft: 15 }}
+          opened={opened}
+          onClick={toggle}
+          hiddenFrom="sm"
+          size="sm"
+        />
         <Logo />
       </AppShell.Header>
       <AppShell.Navbar p="md">
         {isMobile ? <SettingsPage /> : <Navbar />}
       </AppShell.Navbar>
-      <AppShell.Main>{isMobile && <ChatGroups />}</AppShell.Main>
+      <AppShell.Main>
+        <ChatGroups />
+      </AppShell.Main>
     </AppShell>
   );
 };

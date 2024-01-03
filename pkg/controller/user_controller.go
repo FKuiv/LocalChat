@@ -9,6 +9,7 @@ import (
 
 type repository interface {
 	GetAllUsers() ([]models.User, error)
+	GetAllUsersMap() (map[string]string, error)
 	GetUserById(userId string) (*models.User, error)
 	CreateUser(user models.UserRequest) (*models.User, error)
 	DeleteUser(userId string) error

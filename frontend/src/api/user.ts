@@ -12,6 +12,16 @@ export const getAllUsers = () => {
     });
 };
 
+export const getAllUsersMap = () => {
+  return api
+    .get(UserEndpoints.getAllMap())
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error fetching all users:", error);
+      throw error;
+    });
+};
+
 export const getUserById = (userId: string) => {
   return api
     .get(UserEndpoints.byId(userId))

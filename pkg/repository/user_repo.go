@@ -41,6 +41,21 @@ func (repo *UserRepo) GetAllUsers() ([]models.User, error) {
 	return users, nil
 }
 
+func (repo *UserRepo) GetAllUsersMap() (map[string]string, error) {
+	var users []models.User
+	result := repo.db.Find(&users)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	userMap := make(map[string]string)
+	for _, user := range users {
+		userMap[user.Username] = user.ID
+	}
+
+	return userMap, nil
+}
+
 func (repo *UserRepo) GetUserById(userId string) (*models.User, error) {
 	var user models.User
 	result := repo.db.First(&user, "id = ?", userId)
