@@ -115,7 +115,7 @@ const CreateGroupModal = (props: createGroupModalProps) => {
       opened={props.opened}
       onClose={props.onClose}
       title="Create group chat"
-      centered
+      transitionProps={{ transition: "slide-up" }}
     >
       <form onSubmit={form.onSubmit((values) => handleFormSubmit(values))}>
         <Flex direction="column" gap={20}>

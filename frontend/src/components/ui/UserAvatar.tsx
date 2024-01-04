@@ -6,6 +6,8 @@ type userAvatarProps = {
   userId: string;
   altName: string;
   picUrl?: string;
+  size?: string;
+  onClick?: () => void;
 };
 const UserAvatar = (props: userAvatarProps) => {
   const [picUrl, setPicUrl] = useState<string>();
@@ -20,7 +22,15 @@ const UserAvatar = (props: userAvatarProps) => {
     }
   }, [props]);
 
-  return <Avatar src={picUrl} alt={props.altName} radius="md" size="lg" />;
+  return (
+    <Avatar
+      src={picUrl}
+      alt={props.altName}
+      radius="md"
+      size={props.size ? props.size : "lg"}
+      onClick={props.onClick}
+    />
+  );
 };
 
 export default UserAvatar;

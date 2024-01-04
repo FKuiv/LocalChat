@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Cookie from "universal-cookie";
 import UserAvatar from "../ui/UserAvatar";
+import { useDispatch } from "react-redux";
+import { setModalOpen } from "@/redux/userSlice";
 
 const UserCarousel = () => {
   const [usersMap, setUsersMap] = useState<Record<string, string>>({});
@@ -64,6 +66,7 @@ const UserProfileSlide = ({
 }) => {
   const users = [userId, otherUserId];
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = () => {
     if (otherUserId != userId) {
@@ -81,7 +84,9 @@ const UserProfileSlide = ({
           });
         }
       });
-    } // TODO: else open user settings modal
+    } else {
+      dispatch(setModalOpen(true));
+    }
   };
 
   // TODO: add active badge to the user if they are connected via websocket
