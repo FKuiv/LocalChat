@@ -51,13 +51,30 @@ func (handler *groupHandler) GetGroupById(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(group)
 }
 
+func (handler *groupHandler) GetExistingGroupsByUsersAndAdmins(w http.ResponseWriter, r *http.Request) {
+	var request models.GetExistingGroupsByUsersAndAdminsRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if utils.DecodingErr(err, "/group", w) {
+		return
+	}
+
+	groups, err := handler.GroupController.Service.GetExistingGroupsByUsersAndAdmins(request.UserIds, request.Admins)
+
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error getting groups: %s", err), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(groups)
+}
+
 func (handler *groupHandler) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	var group models.GroupRequest
 	err := json.NewDecoder(r.Body).Decode(&group)
 	if utils.DecodingErr(err, "/group", w) {
 		return
 	}
-	fmt.Println(group)
+
 	newGroup, err := handler.GroupController.Service.CreateGroup(group)
 
 	errString := fmt.Sprintf("%s", err)

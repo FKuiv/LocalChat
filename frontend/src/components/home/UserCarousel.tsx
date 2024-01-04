@@ -1,0 +1,101 @@
+import { createGroup, groupExistingByUserIdsAndAdmins } from "@/api/group";
+import { getAllUsersMap, getUserPicture } from "@/api/user";
+import { Group } from "@/types/group";
+import { Carousel } from "@mantine/carousel";
+import { Avatar, Stack, Text } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
+import Cookie from "universal-cookie";
+
+const UserCarousel = () => {
+  const [usersMap, setUsersMap] = useState<Record<string, string>>({});
+  const cookie = new Cookie();
+
+  useEffect(() => {
+    getAllUsersMap().then((res: Record<string, string>) => {
+      setUsersMap(res);
+    });
+  }, []);
+
+  return (
+    <Carousel
+      align="start"
+      slideSize="30%"
+      slideGap="0"
+      pt={5}
+      h="10%"
+      loop
+      withControls={false}
+      style={{ borderBottom: "1px solid var(--_app-shell-border-color)" }}
+    >
+      {Object.keys(usersMap).map((username: string) => {
+        if (usersMap[username] !== cookie.get("UserId")) {
+          return (
+            <UserProfileSlide
+              key={usersMap[username]}
+              otherUsername={username}
+              otherUserId={usersMap[username]}
+              userId={cookie.get("UserId") as string}
+            />
+          );
+        }
+        return (
+          <UserProfileSlide
+            key={usersMap[username]}
+            otherUsername={"Me"}
+            otherUserId={usersMap[username]}
+            userId={cookie.get("UserId") as string}
+          />
+        );
+      })}
+    </Carousel>
+  );
+};
+
+const UserProfileSlide = ({
+  otherUsername,
+  otherUserId,
+  userId,
+}: {
+  otherUsername: string;
+  otherUserId: string;
+  userId: string;
+}) => {
+  const [picUrl, setPicUrl] = useState<string>();
+  const users = [userId, otherUserId];
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    getUserPicture(otherUserId).then((res: string) => {
+      setPicUrl(res);
+    });
+  }, [otherUserId]);
+
+  const handleClick = () => {
+    groupExistingByUserIdsAndAdmins(users, users).then((res: Group[]) => {
+      if (res.length != 0) {
+        navigate(`/chat/${res[0].id}`);
+      } else {
+        createGroup({
+          name: "",
+          user_ids: users,
+          admins: users,
+          isDm: true,
+        }).then((res: Group) => {
+          navigate(`/chat/${res.id}`);
+        });
+      }
+    });
+  };
+
+  return (
+    <Carousel.Slide onClick={handleClick}>
+      <Stack align="center" gap={5} h="100%" justify="center">
+        <Avatar size="lg" radius="md" src={picUrl} alt={otherUsername} />
+        <Text size="md">{otherUsername}</Text>
+      </Stack>
+    </Carousel.Slide>
+  );
+};
+
+export default UserCarousel;

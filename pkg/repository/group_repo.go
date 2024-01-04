@@ -55,7 +55,46 @@ func (repo *GroupRepo) GetGroupById(groupId string) (*models.Group, error) {
 	return &group, nil
 }
 
+func (repo *GroupRepo) GetExistingGroupsByUsersAndAdmins(userIds []string, adminIds []string) ([]models.Group, error) {
+	var groups []models.Group
+
+	// Retrieve all groups
+	result := repo.db.Preload("Users").Find(&groups)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	// Filter groups
+	filteredGroups := []models.Group{}
+	for _, group := range groups {
+		// Check if all adminIds are in group.Admins
+		isAdmin := true
+		for _, adminId := range adminIds {
+			if !utils.SliceContainsStr(group.Admins, adminId) {
+				isAdmin = false
+				break
+			}
+		}
+
+		// Check if all userIds are in group.Users
+		isUser := true
+		for _, userId := range userIds {
+			if !utils.ContainsUser(group.Users, userId) {
+				isUser = false
+				break
+			}
+		}
+
+		if isAdmin && isUser {
+			filteredGroups = append(filteredGroups, group)
+		}
+	}
+
+	return filteredGroups, nil
+}
+
 func (repo *GroupRepo) CreateGroup(groupInfo models.GroupRequest) (*models.Group, error) {
+
 	if !groupInfo.IsDm && groupInfo.Name == "" {
 		return nil, &utils.CustomError{Message: "Group name can't be empty"}
 	}

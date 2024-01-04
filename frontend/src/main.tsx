@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import "./index.css";
 
 import "@mantine/core/styles.css";
+import "@mantine/carousel/styles.css";
 
 import { MantineProvider } from "@mantine/core";
 import { Provider } from "react-redux";

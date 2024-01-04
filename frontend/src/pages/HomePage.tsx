@@ -4,6 +4,7 @@ import Navbar from "@/components/navigation/Navbar";
 import Logo from "@/components/ui/Logo";
 import ChatGroups from "@/components/home/ChatGroups";
 import SettingsPage from "./SettingsPage";
+import UserCarousel from "@/components/home/UserCarousel";
 
 const HomePage = () => {
   const [opened, { toggle }] = useDisclosure();
@@ -29,6 +30,7 @@ const HomePage = () => {
         {isMobile ? <SettingsPage /> : <Navbar />}
       </AppShell.Navbar>
       <AppShell.Main>
+        <UserCarousel />
         <ChatGroups />
       </AppShell.Main>
     </AppShell>

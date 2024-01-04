@@ -61,7 +61,6 @@ const Chat = () => {
     // TODO: after a certain amount of inactivity, make sure to make this request again and clear webscoket message history
     if (fetchNewMessages) {
       getMessagesByGroup(params.groupId, 50).then((res: Message[]) => {
-        console.log("Making request to get messages by group");
         setMessages(res);
         setFetchNewMessages(false);
       });

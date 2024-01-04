@@ -60,6 +60,7 @@ const ChatGroup = (group: Group) => {
           src={picUrl}
           alt={group.is_dm ? group.usernames[otherUserId] : group.name}
           size="lg"
+          radius="md"
         />
         <Title order={3}>
           {group.is_dm ? group.usernames[otherUserId] : group.name}

@@ -83,3 +83,16 @@ export const getGroupPicture = (groupId: string) => {
       throw error;
     });
 };
+
+export const groupExistingByUserIdsAndAdmins = (
+  userIds: string[],
+  admins: string[]
+) => {
+  return api
+    .post(GroupEndpoints.existing(), { user_ids: userIds, admins: admins })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.error("Error checking if group exists:", error);
+      throw error;
+    });
+};

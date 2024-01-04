@@ -17,8 +17,9 @@ type Group struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	Users     []*User   `gorm:"many2many:user_groups;" json:"users"`
 	Messages  []Message `json:"messages"` // Every group can have a lot of messages
-	Admins    Admins    `gorm:"type:text" json:"admins"`
-	IsDm      bool      `json:"is_dm" gorm:"not null"`
+	// Need to create a new type Admins because GORM doesn't support []string
+	Admins Admins `gorm:"type:text" json:"admins"`
+	IsDm   bool   `json:"is_dm" gorm:"not null"`
 }
 
 type GroupRequest struct {
@@ -26,6 +27,11 @@ type GroupRequest struct {
 	UserIDs []string `json:"user_ids"`
 	Admins  Admins   `json:"admins"`
 	IsDm    bool     `json:"is_dm"`
+}
+
+type GetExistingGroupsByUsersAndAdminsRequest struct {
+	UserIds []string `json:"user_ids"`
+	Admins  Admins   `json:"admins"`
 }
 
 type Admins []string

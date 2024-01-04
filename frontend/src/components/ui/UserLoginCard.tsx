@@ -14,10 +14,15 @@ const UserLoginCard = (props: userLoginCardType) => {
     initialValues: defaultLogin,
 
     validate: {
-      username: hasLength(
-        { min: 2, max: 20 },
-        "Username must be between 2-20 characters"
-      ),
+      username: (value) => {
+        if (value.length < 2 || value.length > 20) {
+          return "Username must be between 2-20 characters";
+        }
+        if (value === "Me") {
+          return "Username cannot be Me";
+        }
+        return null;
+      },
       password: hasLength(
         { min: 4, max: 50 },
         "Password must be between 4-50 characters"

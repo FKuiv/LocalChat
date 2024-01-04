@@ -32,7 +32,6 @@ func (c *Client) Read() {
 			return
 		}
 
-		log.Println("Reading message:", message, "with user:", c.Username)
 		c.Hub.Broadcast <- message
 
 		_, dbErr := c.Hub.controllers.MessageController.Service.CreateMessage(message)

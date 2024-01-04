@@ -58,6 +58,7 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/group/{id}", handlers.GroupHandler.DeleteGroup).Methods(http.MethodDelete)
 	muxRouter.HandleFunc("/group/picture/{id}", handlers.GroupHandler.UploadGroupPic).Methods(http.MethodPost)
 	muxRouter.HandleFunc("/group/picture/{id}", handlers.GroupHandler.GetGroupPic).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/group/existing", handlers.GroupHandler.GetExistingGroupsByUsersAndAdmins).Methods(http.MethodPost)
 
 	// Message
 	muxRouter.HandleFunc("/message", handlers.MessageHandler.CreateMessage).Methods(http.MethodPost)

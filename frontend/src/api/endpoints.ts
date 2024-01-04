@@ -20,6 +20,7 @@ export const GroupEndpoints = {
   getAllUserGroups: () => `${baseUrl}/groups/user`,
   byId: (groupId: string | undefined) => `${baseUrl}/group/${groupId}`,
   picture: (groupId: string) => `${baseUrl}/group/picture/${groupId}`,
+  existing: () => `${baseUrl}/group/existing`,
 };
 
 export const MessageEndpoints = {
