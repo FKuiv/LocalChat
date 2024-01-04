@@ -7,7 +7,6 @@ import {
   TextInput,
   Title,
   Tooltip,
-  Avatar,
   Stack,
 } from "@mantine/core";
 import { Group, Usernames, defaultGroup } from "@/types/group";
@@ -23,6 +22,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { getUserPicture } from "@/api/user";
 import GetOtherUsername from "@/utils/GetOtherUsername";
 import GetOtherUserId from "@/utils/GetOtherUserId";
+import UserAvatar from "../ui/UserAvatar";
 
 const Chat = () => {
   const [group, setGroup] = useState<Group>(defaultGroup);
@@ -78,14 +78,14 @@ const Chat = () => {
           <IconArrowLeft />
         </ActionIcon>
         <Flex direction="row" align="center" justify="center" gap={10}>
-          <Avatar
-            src={picUrl}
-            alt={
+          <UserAvatar
+            userId=""
+            altName={
               group.is_dm
                 ? group.usernames[GetOtherUserId(group.usernames, userId)]
                 : group.name
             }
-            size="lg"
+            picUrl={picUrl}
           />
           <Title order={3}>{group.name}</Title>
         </Flex>
@@ -110,26 +110,22 @@ const Chat = () => {
   );
 };
 
-const ChatMessages = ({
-  messages,
-  group,
-  userId,
-  newMessages,
-  picUrl,
-}: {
+type chatMessagesProps = {
   messages: Message[];
   group: Group;
   userId: string;
   newMessages: boolean;
   picUrl: string | undefined;
-}) => {
+};
+
+const ChatMessages = (props: chatMessagesProps) => {
   const messagesEndRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [newMessages]);
+  }, [props.newMessages]);
 
   return (
     <Flex direction="column" style={{ flexGrow: 1, overflow: "scroll" }}>
@@ -139,30 +135,35 @@ const ChatMessages = ({
         align="center"
         style={{ textAlign: "center", borderBottom: "1px dashed gray" }}
       >
-        <Avatar
-          src={picUrl}
-          alt={
-            group.is_dm
-              ? group.usernames[GetOtherUserId(group.usernames, userId)]
-              : group.name
+        <UserAvatar
+          userId=""
+          picUrl={props.picUrl}
+          altName={
+            props.group.is_dm
+              ? props.group.usernames[
+                  GetOtherUserId(props.group.usernames, props.userId)
+                ]
+              : props.group.name
           }
-          size="50%"
         />
+
         <Title>
-          {group.is_dm
-            ? group.usernames[GetOtherUserId(group.usernames, userId)]
-            : group.name}
+          {props.group.is_dm
+            ? props.group.usernames[
+                GetOtherUserId(props.group.usernames, props.userId)
+              ]
+            : props.group.name}
         </Title>
         {/* Display some stats about the group, like how many members. If it's a DM, then like last online or something */}
       </Stack>
-      {messages.map((message) => {
-        if (message.group_id === group.id) {
+      {props.messages.map((message) => {
+        if (message.group_id === props.group.id) {
           return (
             <SingleChatMessage
               key={message.id}
               message={message}
-              usernameMap={group.usernames}
-              userId={userId}
+              usernameMap={props.group.usernames}
+              userId={props.userId}
             />
           );
         }

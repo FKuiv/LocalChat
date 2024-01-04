@@ -2,10 +2,11 @@ import { getAllUserGroups, getGroupPicture } from "@/api/group";
 import { getUserPicture } from "@/api/user";
 import { Group } from "@/types/group";
 import GetOtherUserId from "@/utils/GetOtherUserId";
-import { Flex, Container, Avatar, Title } from "@mantine/core";
+import { Flex, Container, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Cookie from "universal-cookie";
+import UserAvatar from "../ui/UserAvatar";
 
 const ChatGroups = () => {
   const [groups, setGroups] = useState<Group[]>();
@@ -56,11 +57,10 @@ const ChatGroup = (group: Group) => {
       onClick={handleClick}
     >
       <Flex direction="row" align="center" gap="md" h="100%">
-        <Avatar
-          src={picUrl}
-          alt={group.is_dm ? group.usernames[otherUserId] : group.name}
-          size="lg"
-          radius="md"
+        <UserAvatar
+          picUrl={picUrl}
+          altName={group.is_dm ? group.usernames[otherUserId] : group.name}
+          userId=""
         />
         <Title order={3}>
           {group.is_dm ? group.usernames[otherUserId] : group.name}

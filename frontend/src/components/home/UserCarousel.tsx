@@ -1,11 +1,12 @@
 import { createGroup, groupExistingByUserIdsAndAdmins } from "@/api/group";
-import { getAllUsersMap, getUserPicture } from "@/api/user";
+import { getAllUsersMap } from "@/api/user";
 import { Group } from "@/types/group";
 import { Carousel } from "@mantine/carousel";
-import { Avatar, Stack, Text } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import Cookie from "universal-cookie";
+import UserAvatar from "../ui/UserAvatar";
 
 const UserCarousel = () => {
   const [usersMap, setUsersMap] = useState<Record<string, string>>({});
@@ -61,15 +62,8 @@ const UserProfileSlide = ({
   otherUserId: string;
   userId: string;
 }) => {
-  const [picUrl, setPicUrl] = useState<string>();
   const users = [userId, otherUserId];
   const navigate = useNavigate();
-
-  useEffect(() => {
-    getUserPicture(otherUserId).then((res: string) => {
-      setPicUrl(res);
-    });
-  }, [otherUserId]);
 
   const handleClick = () => {
     if (otherUserId != userId) {
@@ -94,7 +88,7 @@ const UserProfileSlide = ({
   return (
     <Carousel.Slide onClick={handleClick}>
       <Stack align="center" gap={5} h="100%" justify="center">
-        <Avatar size="lg" radius="md" src={picUrl} alt={otherUsername} />
+        <UserAvatar userId={otherUserId} altName={otherUsername} />
         <Text size="md">{otherUsername}</Text>
       </Stack>
     </Carousel.Slide>
