@@ -72,22 +72,25 @@ const UserProfileSlide = ({
   }, [otherUserId]);
 
   const handleClick = () => {
-    groupExistingByUserIdsAndAdmins(users, users).then((res: Group[]) => {
-      if (res.length != 0) {
-        navigate(`/chat/${res[0].id}`);
-      } else {
-        createGroup({
-          name: "",
-          user_ids: users,
-          admins: users,
-          isDm: true,
-        }).then((res: Group) => {
-          navigate(`/chat/${res.id}`);
-        });
-      }
-    });
+    if (otherUserId != userId) {
+      groupExistingByUserIdsAndAdmins(users, users).then((res: Group[]) => {
+        if (res.length != 0) {
+          navigate(`/chat/${res[0].id}`);
+        } else {
+          createGroup({
+            name: `${otherUserId} ${userId}`,
+            user_ids: users,
+            admins: users,
+            is_dm: true,
+          }).then((res: Group) => {
+            navigate(`/chat/${res.id}`);
+          });
+        }
+      });
+    } // TODO: else open user settings modal
   };
 
+  // TODO: add active badge to the user if they are connected via websocket
   return (
     <Carousel.Slide onClick={handleClick}>
       <Stack align="center" gap={5} h="100%" justify="center">

@@ -33,7 +33,7 @@ const CreateGroupModal = (props: createGroupModalProps) => {
       picture: null,
       user_ids: [],
       admins: [],
-      isDm: false,
+      is_dm: false,
     },
 
     validate: {
@@ -100,7 +100,7 @@ const CreateGroupModal = (props: createGroupModalProps) => {
       name: values.name,
       user_ids: values.user_ids,
       admins: values.admins,
-      isDm: values.isDm,
+      is_dm: values.is_dm,
     }).then((newGroup: Group) => {
       uploadGroupPicture(newGroup.id, formData).then((res) => {
         if (res.status === 200) {
