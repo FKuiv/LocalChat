@@ -20,6 +20,7 @@ type repository interface {
 	SaveProfilePic(picture multipart.File, pictureInfo *multipart.FileHeader, userId string) error
 	GetProfilePic(userId string) (string, error)
 	GetUsername(userId string) (string, error)
+	DeleteProfilePic(userId string) error
 }
 
 // UserController contains the service, which contains database-related logic, as an injectable dependency, allowing us to decouple business logic from db logic.

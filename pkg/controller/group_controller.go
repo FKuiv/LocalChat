@@ -19,6 +19,7 @@ type group_repository interface {
 	GetAllUserGroupIds(userId string) ([]string, error)
 	SaveGroupPic(picture multipart.File, pictureInfo *multipart.FileHeader, groupId string) error
 	GetGroupPic(groupId string) (string, error)
+	DeleteGroupPic(groupId string) error
 }
 
 type GroupController struct {

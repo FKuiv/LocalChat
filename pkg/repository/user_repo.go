@@ -156,6 +156,10 @@ func (repo *UserRepo) DeleteUser(userId string) error {
 		return &utils.CustomError{Message: fmt.Sprintf("Error deleting user session: %s", err)}
 	}
 
+	if err := repo.DeleteProfilePic(userId); err != nil {
+		return &utils.CustomError{Message: fmt.Sprintf("Error deleting user profile picture: %s", err)}
+	}
+
 	if err := repo.db.Delete(&user).Error; err != nil {
 		return &utils.CustomError{Message: fmt.Sprintf("Error deleting user: %s", err)}
 	}
@@ -300,6 +304,16 @@ func (repo *UserRepo) GetProfilePic(userId string) (string, error) {
 	}
 
 	return presignedURL.String(), nil
+}
+
+func (repo *UserRepo) DeleteProfilePic(userId string) error {
+	err := repo.minio.RemoveObject(context.Background(), utils.MINIO_bucket, utils.UserProfilePicName(userId), minio.RemoveObjectOptions{})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (repo *UserRepo) GetUsername(userId string) (string, error) {

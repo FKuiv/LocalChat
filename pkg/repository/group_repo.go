@@ -163,6 +163,11 @@ func (repo *GroupRepo) DeleteGroup(groupId string, userId string) error {
 		return &utils.CustomError{Message: fmt.Sprintf("Failed to delete all group messages: %s", err)}
 	}
 
+	if err := repo.DeleteGroupPic(groupId); err != nil {
+		return &utils.CustomError{Message: fmt.Sprintf("Error deleting group picture: %s", err)}
+	}
+
+	// This also deletes the group
 	if err := repo.db.Select("Users").Delete(&group).Error; err != nil {
 		fmt.Println("Error removing references from user_groups table", err)
 		return &utils.CustomError{Message: fmt.Sprintf("Failed to remove references from user_groups table: %s", err)}
@@ -315,4 +320,14 @@ func (repo *GroupRepo) GetGroupPic(groupId string) (string, error) {
 	}
 
 	return presignedURL.String(), nil
+}
+
+func (repo *GroupRepo) DeleteGroupPic(groupId string) error {
+	err := repo.minio.RemoveObject(context.Background(), utils.MINIO_bucket, utils.GroupProfilePicName(groupId), minio.RemoveObjectOptions{})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
