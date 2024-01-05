@@ -69,7 +69,7 @@ func StartHTTPServer() {
 	muxRouter.HandleFunc("/message/{groupId}/{messageAmount}", handlers.MessageHandler.GetMessagesByGroup).Methods(http.MethodGet)
 
 	corsInstance := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:5173", "http://localhost:8080"},
+		AllowedOrigins:   []string{"*"},
 		AllowCredentials: true,
 		// Enable Debugging for testing, consider disabling in production
 		Debug: true,

@@ -14,8 +14,10 @@ const LoginPage = () => {
         h="100%"
         gap="xl"
       >
-        <Logo />
-        <Card className="center" miw="30%" maw="70%" h="50%">
+        <Flex>
+          <Logo />
+        </Flex>
+        <Card className="center" miw="30%" maw="70%" h="80%">
           <Tabs defaultValue="createAccount">
             <Tabs.List grow mx={"auto"} w="50%" mb={"xl"}>
               <Tabs.Tab value="createAccount">Create Account</Tabs.Tab>
