@@ -26,4 +26,6 @@ Backend is built with Golang and structured with a repository pattern. The whole
 
 ### Frontend
 
+This branch contains frontend created with SvelteKit. Check the frontend folder's README.md for more info.
+
 The `/api` folder contains all the endpoints defined in the backend but just translated into Typescript. Yes it is a little bit tedious/stupid to just copy the endpoints over but I can't think of a better solution at the moment. The `api/endpoints.ts` file includes the backend REST API endpoint URL definitions. Other files in the `/api` folder include the actual Axios requests that can be easily used throughout the frontend.
