@@ -1,27 +1,34 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+This branch contains frontend built with SvelteKit. UI library I used is [Skeleton](https://www.skeleton.dev). I initated the frontend with Skeleton CLI tool:
 ```
+npm create skeleton-app@latest .               
+┌  Create Skeleton App (version 0.0.54)
+	
+Welcome to Skeleton 💀! A UI toolkit for Svelte + Tailwind
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Problems? Open an issue on https://github.com/skeletonlabs/skeleton/issues if none exists already.
+│
+◇  Which Skeleton app template?
+│  AppShell starter
+│
+◇  Select a theme (top most selection will be default):
+│  Crimson
+│
+◇
+What other packages would you like to install:
+│  Add Tailwind forms?, Add Popups (installs floating-ui)?
+│
+◇  Add type checking with TypeScript?
+│  Yes, using TypeScript syntax
+│
+◇  What would you like setup in your project:
+│  Add ESLint for code linting?, Add Prettier for code formatting?
+│
+◇  Done installing
+
+Done! You can now:
+
+cd 
+npm install
+npm run dev
+Need some help or found an issue? Visit us on Discord https://discord.gg/EXqV7W8MtY
+```
