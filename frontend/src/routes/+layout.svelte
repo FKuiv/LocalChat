@@ -2,22 +2,23 @@
 	import '../app.postcss';
 	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
 
-	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+	import { QueryClient, QueryClientProvider } from '@sveltestack/svelte-query';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
+
+	let client = new QueryClient();
 </script>
 
-<!-- App Shell -->
-<AppShell>
-	<svelte:fragment slot="header">
-		<!-- App Bar -->
-		<AppBar>
-			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Localchat</strong>
-			</svelte:fragment>
-		</AppBar>
-	</svelte:fragment>
-	<!-- Page Route Content -->
-	<slot />
-</AppShell>
+<QueryClientProvider {client}>
+	<AppShell>
+		<svelte:fragment slot="header">
+			<AppBar>
+				<svelte:fragment slot="lead">
+					<strong class="text-xl uppercase">Localchat</strong>
+				</svelte:fragment>
+			</AppBar>
+		</svelte:fragment>
+		<slot />
+	</AppShell>
+</QueryClientProvider>
