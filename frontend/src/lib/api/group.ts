@@ -1,4 +1,4 @@
-import type { GroupRequest, UpdateGroup } from '@/types/group';
+import type { GroupRequest, UpdateGroup } from '@/lib/types/group';
 import { api } from '.';
 import { GroupEndpoints } from './endpoints';
 

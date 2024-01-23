@@ -1,4 +1,4 @@
-import type { Login, User } from '@/types/user';
+import type { Login, User } from '@/lib/types/user';
 import { api } from '.';
 import { UserEndpoints } from './endpoints';
 import type { AxiosResponse } from 'axios';

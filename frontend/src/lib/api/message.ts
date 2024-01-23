@@ -1,4 +1,4 @@
-import type { Message, UpdateMessage } from '@/types/message';
+import type { Message, UpdateMessage } from '@/lib/types/message';
 import { api } from '.';
 import { MessageEndpoints } from './endpoints';
 
