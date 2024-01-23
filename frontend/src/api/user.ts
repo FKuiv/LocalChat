@@ -1,10 +1,11 @@
-import type { Login } from '@/types/user';
+import type { Login, User } from '@/types/user';
 import { api } from '.';
 import { UserEndpoints } from './endpoints';
+import type { AxiosResponse } from 'axios';
 
-export const getAllUsers = () => {
+export const getAllUsers = (): Promise<AxiosResponse<User[]>> => {
 	return api
-		.get(UserEndpoints.getAll())
+		.get<User[]>(UserEndpoints.getAll())
 		.then((response) => response)
 		.catch((error) => {
 			throw error;

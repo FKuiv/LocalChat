@@ -1,8 +1,10 @@
-<script>
+<script lang="ts">
 	import { getAllUsers } from '@/api/user';
 	import { useQuery } from '@sveltestack/svelte-query';
+	import type { User } from '@/types/user';
+	import type { AxiosResponse } from 'axios';
 
-	let query = useQuery('test', getAllUsers);
+	let query = useQuery<AxiosResponse<User[]>>('test', getAllUsers);
 	console.log($query);
 </script>
 
@@ -13,7 +15,7 @@
 	{:else if $query.isError}
 		{$query.error}
 	{:else}
-		{#each $query.data as user}
+		{#each $query.data?.data ?? [] as user (user.id)}
 			<div>{user.username}</div>
 		{/each}
 	{/if}
