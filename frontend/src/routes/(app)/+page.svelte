@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { getAllUsers } from '@/api/user';
+	import { getAllUsers } from '@/lib/api/user';
 	import { useQuery } from '@sveltestack/svelte-query';
-	import type { User } from '@/types/user';
+	import type { User } from '@/lib/types/user';
 	import type { AxiosResponse } from 'axios';
 
 	let query = useQuery<AxiosResponse<User[]>>('test', getAllUsers);
