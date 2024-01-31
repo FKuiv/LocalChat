@@ -1,1 +1,5 @@
-<h1>Create an account</h1>
+<script lang="ts">
+	import AuthForm from '@/lib/components/AuthForm.svelte';
+</script>
+
+<AuthForm formRoute="register" />
