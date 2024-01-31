@@ -3,13 +3,15 @@
 	import BasicForm from './BasicForm.svelte';
 	import { page } from '$app/stores';
 	import Logo from './Logo.svelte';
+	import type { SuperValidated } from 'sveltekit-superforms';
+	import type { LoginSchema } from '../types/schemas';
 
 	let tabSet: number = 0;
-	let title: string = 'Login';
 	export let formRoute = 'login';
+	export let data: SuperValidated<LoginSchema>;
+
 	if (formRoute === 'register') {
 		tabSet = 1;
-		title = 'Register';
 	}
 </script>
 
@@ -31,7 +33,7 @@
 			selected={$page.url.pathname === '/register'}>Register</TabAnchor
 		>
 		<svelte:fragment slot="panel">
-			<BasicForm />
+			<BasicForm {data} />
 		</svelte:fragment>
 	</TabGroup>
 </div>
