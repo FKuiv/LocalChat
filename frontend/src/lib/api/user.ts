@@ -1,4 +1,4 @@
-import type { Login, User } from '@/lib/types/user';
+import { type UserMap, type Login, type User } from '@/lib/types/user';
 import { api } from '.';
 import { UserEndpoints } from './endpoints';
 import type { AxiosResponse } from 'axios';
@@ -12,104 +12,94 @@ export const getAllUsers = (): Promise<AxiosResponse<User[]>> => {
 		});
 };
 
-export const getAllUsersMap = () => {
+export const getAllUsersMap = (): Promise<AxiosResponse<UserMap>> => {
 	return api
-		.get(UserEndpoints.getAllMap())
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error('Error fetching all users:', error);
-			throw error;
-		});
-};
-
-export const getUserById = (userId: string) => {
-	return api
-		.get(UserEndpoints.byId(userId))
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error(`Error fetching user with ID ${userId}:`, error);
-			throw error;
-		});
-};
-
-export const createUser = (loginInfo: Login) => {
-	return api
-		.post(UserEndpoints.base(), loginInfo)
+		.get<UserMap>(UserEndpoints.getAllMap())
 		.then((response) => response)
 		.catch((error) => {
-			console.error('Error creating user:', error);
 			throw error;
 		});
 };
 
-export const deleteUser = () => {
+export const getUserById = (userId: string): Promise<AxiosResponse<User>> => {
 	return api
-		.delete(UserEndpoints.delete())
+		.get<User>(UserEndpoints.byId(userId))
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error deleting user:`, error);
 			throw error;
 		});
 };
 
-export const updateUser = (updatedData: Login) => {
+export const createUser = (loginInfo: Login): Promise<AxiosResponse<User>> => {
 	return api
-		.put(UserEndpoints.base(), updatedData)
+		.post<User>(UserEndpoints.base(), loginInfo)
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error updating user:`, error);
 			throw error;
 		});
 };
 
-export const loginUser = (loginData: Login) => {
+export const deleteUser = (): Promise<AxiosResponse<string>> => {
 	return api
-		.post(UserEndpoints.login(), loginData)
+		.delete<string>(UserEndpoints.delete())
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error logging in user:`, error);
 			throw error;
 		});
 };
 
-export const logoutUser = () => {
+export const updateUser = (updatedData: Login): Promise<AxiosResponse<User>> => {
 	return api
-		.get(UserEndpoints.logout())
+		.put<User>(UserEndpoints.base(), updatedData)
 		.then((response) => response)
 		.catch((error) => {
-			console.log('Error logging out user:', error);
 			throw error;
 		});
 };
 
-export const getUsername = (userId: string) => {
+export const loginUser = (loginData: Login): Promise<AxiosResponse<string>> => {
 	return api
-		.get(UserEndpoints.username(userId))
-		.then((response) => response.data)
+		.post<string>(UserEndpoints.login(), loginData)
+		.then((response) => response)
 		.catch((error) => {
-			console.error('Error fetching username:', error);
 			throw error;
 		});
 };
 
-export const uploadUserPicture = (formData: FormData) => {
+export const logoutUser = (): Promise<AxiosResponse<string>> => {
 	return api
-		.post(UserEndpoints.picture(), formData, {
+		.get<string>(UserEndpoints.logout())
+		.then((response) => response)
+		.catch((error) => {
+			throw error;
+		});
+};
+
+export const getUsername = (userId: string): Promise<AxiosResponse<string>> => {
+	return api
+		.get<string>(UserEndpoints.username(userId))
+		.then((response) => response)
+		.catch((error) => {
+			throw error;
+		});
+};
+
+export const uploadUserPicture = (formData: FormData): Promise<AxiosResponse<string>> => {
+	return api
+		.post<string>(UserEndpoints.picture(), formData, {
 			headers: { 'Content-Type': 'multipart/form-data' }
 		})
 		.then((response) => response)
 		.catch((error) => {
-			console.error('Error uploading user picture:', error);
 			throw error;
 		});
 };
 
-export const getUserPicture = (userId: string) => {
+export const getUserPicture = (userId: string): Promise<AxiosResponse<string>> => {
 	return api
-		.get(UserEndpoints.getPicture(userId))
-		.then((response) => response.data)
+		.get<string>(UserEndpoints.getPicture(userId))
+		.then((response) => response)
 		.catch((error) => {
-			console.error('Error fetching user picture:', error);
 			throw error;
 		});
 };

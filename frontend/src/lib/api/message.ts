@@ -1,62 +1,64 @@
 import type { Message, UpdateMessage } from '@/lib/types/message';
 import { api } from '.';
 import { MessageEndpoints } from './endpoints';
+import type { AxiosResponse } from 'axios';
 
-export const createMessage = (messageData: Message) => {
+export const createMessage = (messageData: Message): Promise<AxiosResponse<Message>> => {
 	return api
-		.post(MessageEndpoints.base(), messageData)
+		.post<Message>(MessageEndpoints.base(), messageData)
 		.then((response) => response)
 		.catch((error) => {
 			return error;
 		});
 };
 
-export const getAllMessages = () => {
+export const getAllMessages = (): Promise<AxiosResponse<Message[]>> => {
 	return api
-		.get(MessageEndpoints.getAll())
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error(`Error getting all messages:`, error);
-			throw error;
-		});
-};
-
-export const getMessageById = (id: string) => {
-	return api
-		.get(MessageEndpoints.byId(id))
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error(`Error getting message by id:`, error);
-			throw error;
-		});
-};
-
-export const updateMessage = (id: string, messageData: UpdateMessage) => {
-	return api
-		.put(MessageEndpoints.byId(id), messageData)
+		.get<Message[]>(MessageEndpoints.getAll())
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error updating message:`, error);
 			throw error;
 		});
 };
 
-export const deleteMessage = (id: string) => {
+export const getMessageById = (id: string): Promise<AxiosResponse<Message>> => {
 	return api
-		.delete(MessageEndpoints.byId(id))
+		.get<Message>(MessageEndpoints.byId(id))
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error deleting message:`, error);
 			throw error;
 		});
 };
 
-export const getMessagesByGroup = (groupId: string | undefined, messageAmount: number) => {
+export const updateMessage = (
+	id: string,
+	messageData: UpdateMessage
+): Promise<AxiosResponse<Message>> => {
 	return api
-		.get(MessageEndpoints.getByGroup(groupId, messageAmount))
-		.then((response) => response.data)
+		.put<Message>(MessageEndpoints.byId(id), messageData)
+		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error getting messages by group:`, error);
+			throw error;
+		});
+};
+
+export const deleteMessage = (id: string): Promise<AxiosResponse<string>> => {
+	return api
+		.delete<string>(MessageEndpoints.byId(id))
+		.then((response) => response)
+		.catch((error) => {
+			throw error;
+		});
+};
+
+export const getMessagesByGroup = (
+	groupId: string | undefined,
+	messageAmount: number
+): Promise<AxiosResponse<Message[]>> => {
+	return api
+		.get<Message[]>(MessageEndpoints.getByGroup(groupId, messageAmount))
+		.then((response) => response)
+		.catch((error) => {
 			throw error;
 		});
 };

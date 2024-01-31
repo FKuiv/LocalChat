@@ -1,6 +1,6 @@
 import { superValidate } from 'sveltekit-superforms/server';
 import { LoginSchema } from '@/lib/types/schemas';
-import { fail } from 'assert';
+import { error } from '@sveltejs/kit';
 
 export const load = async () => {
 	const form = await superValidate(LoginSchema);
@@ -14,7 +14,7 @@ export const actions = {
 		console.log('POST', form);
 
 		if (!form.valid) {
-			return fail(400, { form });
+			return error(400, 'Invalid form');
 		}
 
 		// TODO: Log the user in

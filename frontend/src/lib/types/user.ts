@@ -29,3 +29,5 @@ export type User = {
 	groups: Group[];
 	session: Session;
 };
+
+export type UserMap = Record<string, string>;

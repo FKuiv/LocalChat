@@ -1,95 +1,93 @@
-import type { GroupRequest, UpdateGroup } from '@/lib/types/group';
+import type { Group, GroupRequest, UpdateGroup } from '@/lib/types/group';
 import { api } from '.';
 import { GroupEndpoints } from './endpoints';
+import type { AxiosResponse } from 'axios';
 
-export const createGroup = (groupData: GroupRequest) => {
+export const createGroup = (groupData: GroupRequest): Promise<AxiosResponse<Group>> => {
 	return api
-		.post(GroupEndpoints.base(), groupData)
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error(`Error creating group:`, error);
-			throw error;
-		});
-};
-
-export const getAllGroups = () => {
-	return api
-		.get(GroupEndpoints.getAll())
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error(`Error getting all groups:`, error);
-			throw error;
-		});
-};
-
-export const getGroupById = (id: string | undefined) => {
-	return api
-		.get(GroupEndpoints.byId(id))
-		.then((response) => response.data)
-		.catch((error) => {
-			console.error(`Error getting group by id:`, error);
-			throw error;
-		});
-};
-
-export const updateGroup = (id: string, groupData: UpdateGroup) => {
-	return api
-		.put(GroupEndpoints.byId(id), groupData)
+		.post<Group>(GroupEndpoints.base(), groupData)
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error updating group:`, error);
 			throw error;
 		});
 };
 
-export const deleteGroup = (id: string) => {
+export const getAllGroups = (): Promise<AxiosResponse<Group[]>> => {
 	return api
-		.delete(GroupEndpoints.byId(id))
+		.get<Group[]>(GroupEndpoints.getAll())
 		.then((response) => response)
 		.catch((error) => {
-			console.error(`Error deleting group:`, error);
 			throw error;
 		});
 };
 
-export const getAllUserGroups = () => {
+export const getGroupById = (id: string | undefined): Promise<AxiosResponse<Group>> => {
 	return api
-		.get(GroupEndpoints.getAllUserGroups())
-		.then((response) => response.data)
+		.get<Group>(GroupEndpoints.byId(id))
+		.then((response) => response)
 		.catch((error) => {
-			console.error('Error getting user groups:', error);
 			throw error;
 		});
 };
 
-export const uploadGroupPicture = (groupId: string, formData: FormData) => {
+export const updateGroup = (id: string, groupData: UpdateGroup): Promise<AxiosResponse<Group>> => {
 	return api
-		.post(GroupEndpoints.picture(groupId), formData, {
+		.put<Group>(GroupEndpoints.byId(id), groupData)
+		.then((response) => response)
+		.catch((error) => {
+			throw error;
+		});
+};
+
+export const deleteGroup = (id: string): Promise<AxiosResponse<string>> => {
+	return api
+		.delete<string>(GroupEndpoints.byId(id))
+		.then((response) => response)
+		.catch((error) => {
+			throw error;
+		});
+};
+
+export const getAllUserGroups = (): Promise<AxiosResponse<Group[]>> => {
+	return api
+		.get<Group[]>(GroupEndpoints.getAllUserGroups())
+		.then((response) => response)
+		.catch((error) => {
+			throw error;
+		});
+};
+
+export const uploadGroupPicture = (
+	groupId: string,
+	formData: FormData
+): Promise<AxiosResponse<string>> => {
+	return api
+		.post<string>(GroupEndpoints.picture(groupId), formData, {
 			headers: { 'Content-Type': 'multipart/form-data' }
 		})
 		.then((response) => response)
 		.catch((error) => {
-			console.error('Error uploading group picture:', error);
 			throw error;
 		});
 };
 
-export const getGroupPicture = (groupId: string) => {
+export const getGroupPicture = (groupId: string): Promise<AxiosResponse<string>> => {
 	return api
-		.get(GroupEndpoints.picture(groupId))
-		.then((response) => response.data)
+		.get<string>(GroupEndpoints.picture(groupId))
+		.then((response) => response)
 		.catch((error) => {
-			console.error('Error getting group picture:', error);
 			throw error;
 		});
 };
 
-export const groupExistingByUserIdsAndAdmins = (userIds: string[], admins: string[]) => {
+export const groupExistingByUserIdsAndAdmins = (
+	userIds: string[],
+	admins: string[]
+): Promise<AxiosResponse<Group[]>> => {
 	return api
-		.post(GroupEndpoints.existing(), { user_ids: userIds, admins: admins })
-		.then((response) => response.data)
+		.post<Group[]>(GroupEndpoints.existing(), { user_ids: userIds, admins: admins })
+		.then((response) => response)
 		.catch((error) => {
-			console.error('Error checking if group exists:', error);
 			throw error;
 		});
 };

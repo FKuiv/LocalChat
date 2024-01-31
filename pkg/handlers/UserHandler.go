@@ -153,6 +153,9 @@ func (handler *userHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	userCookie := http.Cookie{Name: "UserId", Value: session.UserID, Domain: "localhost", Path: "/", Expires: session.ExpiresAt, MaxAge: 604800, HttpOnly: false}
 	http.SetCookie(w, &userCookie)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("User logged in successfully"))
 }
 
 func (handler *userHandler) Logout(w http.ResponseWriter, r *http.Request) {
