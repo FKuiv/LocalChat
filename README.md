@@ -11,4 +11,4 @@ Checkout other branches to see a similar implementation with other technologies.
 ## TODO
 
 - The app with Sveltekit
-- PWA (manifest)
+- PWA (manifest, serviceworker, caching): https://whatpwacando.today/
