@@ -3,6 +3,11 @@
 @tailwind utilities;
 @tailwind variants;
 
+:root [data-theme='gold-nouveau'] {
+	--theme-rounded-base: 8px;
+	--theme-rounded-container: 4px;
+}
+
 /* gold-nouveau theme */
 @font-face {
 	font-family: 'Quicksand';
@@ -20,4 +25,15 @@
 	font-family: 'Quicksand';
 	src: url('/fonts/Quicksand.ttf');
 	font-display: swap;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	width: 100vw;
+	height: 100vh;
 }
