@@ -1,10 +1,5 @@
+import type { ChatMessage } from '$lib/types';
 import { writable } from 'svelte/store';
-
-export type ChatMessage = {
-	id: string;
-	content: string;
-	timestamp: Date;
-};
 
 export const messages = writable<ChatMessage[]>([]);
 

@@ -1,1 +1,2 @@
-export const chatEvent = 'message';
+export const readChatMessageIdentifier = 'message';
+export const writeChatMessageIdentifier = 'writeMessage';
