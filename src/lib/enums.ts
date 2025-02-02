@@ -1,0 +1,1 @@
+export const chatEvent = 'message';
