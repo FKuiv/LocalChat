@@ -1,12 +1,13 @@
 import { source } from 'sveltekit-sse';
 import { readChatMessageIdentifier } from '$lib/enums';
+import type { PageLoad } from './$types';
 // import { addMessage } from '$lib/stores/chatStore';
 
-export const load = async () => {
+export const load: PageLoad = async ({ data }) => {
 	const value = source(`/api/chat`).select(readChatMessageIdentifier);
-	value.json().subscribe((message) => {
-		if (!message) return;
-		console.log('new meesasage', message);
+	value.subscribe((message) => {
+		console.log('READING new message:', message);
 		// addMessage(message);
 	});
+	return data;
 };
